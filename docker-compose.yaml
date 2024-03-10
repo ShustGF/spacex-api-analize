@@ -225,7 +225,9 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-#############################################################################################
+
+        
+######    Create PostgreSQL for transactions    ######
   postgres_data:
     build: ./postgres/
     container_name: postgres_container
@@ -258,6 +260,8 @@ services:
     networks:
       - postgres
 
+
+#### Create PGAdmin ####
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4:8.4
@@ -277,11 +281,15 @@ services:
           memory: 1G
     networks:
       - postgres
+
+#####  Allocated disk space  #####
 volumes:
-  postgres-db-volume:
-  PGDATA:
+  postgres-db-volume:  # выделено по умолчанию для AirFlow
+  PGDATA:  # Выделен для postgres_data
   pgadmin-data:
 
+
+#####  Settings Networks  #####
 networks:
   postgres:
     driver: bridge
