@@ -28,7 +28,7 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
-    postgres_data:
+    server_public:
       condition: service_healthy
     
 
@@ -226,39 +226,59 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-        
-######    Create PostgreSQL for transactions    ######
-  postgres_data:
-    build: ./postgres/
-    container_name: postgres_container
+
+##### поднятие транзакционного PSQL(создана логическая репликация через публикацию) #####
+  server_public:
+    image: postgres:14
+    container_name: server_public
+    restart: always
+    ports:
+      - '5431:5432'
     command:
       - "postgres"
       - "-c"
-      - "shared_buffers=1GB"
+      - "wal_level=logical"
       - "-c"
       - "work_mem=512MB"
     environment:
-      POSTGRES_USER: user
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: gfh0km
-      POSTGRES_DB: postgres
-    volumes:
-      - PGDATA:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+      POSTGRES_DB: replica_logical
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d replica_logical"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-    restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 4G
+    volumes:
+      - '/mnt/d/GitHub/spacex-api-analize/postgres/Comand1:/docker-entrypoint-initdb.d/'
     networks:
-      - postgres
+      replication_network:
+        ipv4_address: 192.168.1.2
+      data_postgres:
+
+####   Сервер подписчика с данного сервера будем брать данные и класть в CH####
+  server_subscription:
+    image: postgres:14
+    container_name: server_subscription
+    ports:
+      - '5433:5432'
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: gfh0km
+      POSTGRES_DB: postgres
+      
+    volumes:
+      - '/mnt/d/GitHub/spacex-api-analize/postgres/Comand2:/docker-entrypoint-initdb.d/'
+    networks:
+      replication_network:
+        ipv4_address: 192.168.1.3
+      data_postgres:
+    depends_on:
+      server_public:
+        condition: service_healthy
+
 
 
 #### Create PGAdmin ####
@@ -280,7 +300,7 @@ services:
           cpus: '0.5'
           memory: 1G
     networks:
-      - postgres
+      - data_postgres
 
 #####  Allocated disk space  #####
 volumes:
@@ -291,5 +311,13 @@ volumes:
 
 #####  Settings Networks  #####
 networks:
-  postgres:
+  data_postgres:
     driver: bridge
+    name: network_data_postgres
+  replication_network:
+    name: localnet
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.1.0/24
