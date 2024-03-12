@@ -1,5 +1,0 @@
-FROM postgres:14
-
-RUN apt-get update && apt-get install -y nano
-
-COPY ./Commands.sql /docker-entrypoint-initdb.d/Commands.sql
