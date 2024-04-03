@@ -3,7 +3,7 @@ import json
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from sqlalchemy import Column,Numeric , String, Integer, ForeignKey, Boolean, DateTime, JSON
+from sqlalchemy import Column,Numeric , String, JSON
 
 db_name = 'replica_logical'
 db_user = 'postgres'
@@ -22,7 +22,7 @@ def return_request(url):
   return req_answer.text
 
 def object_starlink(sat_json):
-  starlink_sat = Starlink_sat(
+  starlink_sat = StarlinkSat(
     spacetrack=sat_json['spaceTrack'], 
     version=sat_json['version'],
     launch=sat_json['launch'],
@@ -34,7 +34,7 @@ def object_starlink(sat_json):
   )
   return starlink_sat
 
-class Starlink_sat(Base):
+class StarlinkSat(Base):
   __tablename__ = 'starlink_satellites'
   spacetrack = Column(JSON)
   version = Column(String)
@@ -45,7 +45,8 @@ class Starlink_sat(Base):
   velocity_kms = Column(Numeric)
   id = Column(String, primary_key=True)
 
-  def __init__(self, spacetrack, version=None, launch=None, longitude=None, latitude=None, height_km=None, velocity_kms=None, id=None):
+  def __init__(self, spacetrack, version=None, launch=None, longitude=None, 
+               latitude=None, height_km=None, velocity_kms=None, id=None):
     self.spacetrack = spacetrack
     self.version = version
     self.launch = launch
@@ -56,12 +57,12 @@ class Starlink_sat(Base):
     self.id = id
 
     @property
-    def spaceTrack(self):
-      return self._spaceTrack
+    def spacetrack(self):
+      return self._spacetrack
     
-    @spaceTrack.setter
-    def spaceTrack(self, spaceTrack):
-      self._spaceTrack = json.loads(spaceTrack)
+    @spacetrack.setter
+    def spacetrack(self, spacetrack):
+      self._spacetrack = json.loads(spacetrack)
 
 
 engine = create_engine(db_string)
