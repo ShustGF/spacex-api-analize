@@ -1,6 +1,7 @@
 import json
 
 import requests
+from decouple import config
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
@@ -28,14 +29,16 @@ def object_starlink(sat_json):
   return starlink_sat
 
 if __name__ == '__main__':
-  db_name = 'replica_logical'
-  db_user = 'postgres'
-  db_pass = 'gfh0km'
-  db_host = 'localhost'
-  db_port = '5431'
+  
+  db_name = config('POSTGRES_SENDER_DB')
+  db_user = config('POSTGRES_SENDER_USER')
+  db_pass = config('POSTGRES_SENDER_PASSWORD')
+  db_host = config('POSTGRES_SENDER_HOST')
+  db_port = config('POSTGRES_SENDER_PORT')
   db_string = 'postgresql://{}:{}@{}:{}/{}'.format(db_user, db_pass, db_host, db_port, db_name)
-  url_starlink = "https://api.spacexdata.com/v4/starlink"
 
+  url_starlink = "https://api.spacexdata.com/v4/starlink"
+  
   engine = create_engine(db_string)
   session = Session(bind=engine)
   session.add_all([object_starlink(json_sat) for json_sat in json.loads(return_request(url_starlink))])
