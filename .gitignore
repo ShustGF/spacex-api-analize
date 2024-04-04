@@ -1,5 +1,7 @@
 /airflow/logs/
 /airflow/dags/__pycache__/
+.env
+env
 
 # Airflow configuration
 airflow.cfg
