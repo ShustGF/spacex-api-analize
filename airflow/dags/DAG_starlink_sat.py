@@ -7,6 +7,7 @@ import requests
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.providers.postgres.operators.postgres import PostgresOperator
 from sqlalchemy.orm import Session
 
 from structure_json import StarlinkSat
@@ -55,3 +56,16 @@ add_values_starlink_in_table = PythonOperator(
     python_callable=_add_values_starlink_in_table,
     dag=dag,
   )
+
+сhecking_the_connection_PSQL = PostgresOperator(
+  task_id = 'сhecking_the_connection_PSQL',
+  postgres_conn_id='logical_rep',
+  sql="""
+  SELECT 1
+  FROM starlink_satellites
+  WHERE 1=0
+  """,
+  dag=dag,
+) 
+
+сhecking_the_connection_PSQL >> add_values_starlink_in_table
