@@ -7,8 +7,6 @@ import requests
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
-from decouple import config
-from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from structure_json import StarlinkSat
