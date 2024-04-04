@@ -8,14 +8,14 @@ from sqlalchemy.orm import Session
 from structure_json import StarlinkSat
 
 
-def return_request(url):
+def get_data_from_url(url):
   req_answer = requests.get(url)
   if req_answer.status_code == 404:
-    raise AttributeError("Неверное значение URL-адреса")
+    raise AttributeError('Неверное значение URL-адреса')
   return req_answer.text
 
 
-def object_starlink(sat_json):
+def get_object_starlink(sat_json):
   starlink_sat = StarlinkSat(
     spacetrack=sat_json['spaceTrack'], 
     version=sat_json['version'],
@@ -28,6 +28,7 @@ def object_starlink(sat_json):
   )
   return starlink_sat
 
+
 if __name__ == '__main__':
   
   db_name = config('POSTGRES_SENDER_DB')
@@ -37,11 +38,11 @@ if __name__ == '__main__':
   db_port = config('POSTGRES_SENDER_PORT')
   db_string = 'postgresql://{}:{}@{}:{}/{}'.format(db_user, db_pass, db_host, db_port, db_name)
 
-  url_starlink = "https://api.spacexdata.com/v4/starlink"
+  url_starlink = 'https://api.spacexdata.com/v4/starlink'
   
   engine = create_engine(db_string)
   session = Session(bind=engine)
-  session.add_all([object_starlink(json_sat) for json_sat in json.loads(return_request(url_starlink))])
-  # print(session.new)
+  session.add_all([get_object_starlink(json_sat) for json_sat in json.loads(get_data_from_url(url_starlink))])
   session.commit()
-  print("Выполнено")
+  print('Выполнено')
+

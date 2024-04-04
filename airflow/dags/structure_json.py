@@ -26,3 +26,5 @@ class StarlinkSat(Base):
     self.height_km = height_km
     self.velocity_kms = velocity_kms
     self.id = id
+
+    
