@@ -6,6 +6,7 @@ import requests
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 from decouple import config
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -33,32 +34,26 @@ def get_object_starlink(sat_json):
   )
   return starlink_sat
 
-def _task1():
-  db_name = config('PO STGRES_SENDER_DB')
-  db_user = config('POSTGRES_SENDER_USER')
-  db_pass = config('POSTGRES_SENDER_PASSWORD')
-  db_host = config('POSTGRES_SENDER_HOST')
-  db_port = config('POSTGRES_SENDER_PORT')
-  db_string = 'postgresql://{}:gfh0km@{}:{}/{}'.format(db_user, db_host, db_port, db_name)
-  engine = create_engine(db_string)
+
+def _add_values_starlink_in_table():
+  pg_hook = PostgresHook(postgres_conn_id='logical_rep')
+  engine = pg_hook.get_sqlalchemy_engine()
   session = Session(bind=engine)
   session.add_all([get_object_starlink(json_sat) for json_sat in json.loads(get_data_from_url(url_starlink))])
   session.commit()
   print('Выполнено')
 
-  
+
+url_starlink = 'https://api.spacexdata.com/v4/starlink'
 
 dag = DAG(
-    dag_id="get_objects_starlink2",
+    dag_id='get_objects_starlink',
     start_date=airflow.utils.dates.days_ago(1),
     schedule_interval=None,
   )
 
-url_starlink = 'https://api.spacexdata.com/v4/starlink'
-
-task1 = PythonOperator(
-    task_id = 'task1',
-    python_callable=_task1,
-    dag=dag
+add_values_starlink_in_table = PythonOperator(
+    task_id = 'add_values_starlink_in_table',
+    python_callable=_add_values_starlink_in_table,
+    dag=dag,
   )
-
