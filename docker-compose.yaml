@@ -1,7 +1,8 @@
 version: '3.5'
 x-airflow-common:
   &airflow-common
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.8.2}
+  #image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.8.2}
+  build: .
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -13,6 +14,11 @@ x-airflow-common:
     AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__CORE__TEST_CONNECTION: 'Enabled'
+    POSTGRES_SENDER_USER: postgres
+    POSTGRES_SENDER_PASSWORD=: gfh0km
+    POSTGRES_SENDER_HOST: host.docker.internal
+    POSTGRES_SENDER_PORT: 5431
+    POSTGRES_SENDER_DB: replica_logical
 
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
 
@@ -323,3 +329,5 @@ networks:
       driver: default
       config:
         - subnet: 192.168.1.0/24
+
+        
