@@ -90,6 +90,12 @@ class LaunchesSpaceX(Base):
     self.cores = cores
     self.id = id
 
+    def __current_datetime_utc(self, value):
+      if value == None:
+        return None
+      else:
+        format_time_utc = '%Y-%m-%dT%H:%M:%S.%fZ'
+        return datetime.strptime(value,format_time_utc)
 
     @property
     def static_fire_date_utc(self):
@@ -97,11 +103,7 @@ class LaunchesSpaceX(Base):
     
     @static_fire_date_utc.setter
     def static_fire_date_utc(name, value):
-      if value == None:
-        self._static_fire_date_utc=None
-      else:
-        format_time_utc = '%Y-%m-%dT%H:%M:%S.%fZ'
-        self._static_fire_date_utc=datetime.strptime(value,format_time_utc)
+      self._static_fire_date_utc=__current_datetime_utc(value=value)
 
 
     @property
@@ -111,8 +113,28 @@ class LaunchesSpaceX(Base):
     @date_utc.setter
     def date_utc(name, value):
       if value == None:
-        self._static_fire_date_utc=None
-      else:
-        format_time_utc = '%Y-%m-%dT%H:%M:%S.%fZ'
-        self._static_fire_date_utc=datetime.strptime(value,format_time_utc)
-    
+        self._date_utc=__current_datetime_utc(value=value)
+
+class Capsules(Base):
+  __tablename__='capsules'
+  reuse_count=Column(Numeric)
+  water_landings=Column(Numeric)
+  land_landings=Column(Numeric)
+  last_update=Column(String)
+  launches=Column(ARRAY(String))
+  serial=Column(String)
+  status=Column(String)
+  type=Column(String)
+  id = Column(String, primary_key=True)
+
+  def __init__(self, reuse_count=None, water_landings=None, land_landings=None, last_update=None, 
+               launches=None, serial=None, status=None, type=None, id=None):
+    self.reuse_count = reuse_count
+    self.water_landings = water_landings
+    self.land_landings = land_landings
+    self.last_update = last_update
+    self.launches = launches
+    self.serial = serial
+    self.status = status
+    self.type = type
+    self.id = id

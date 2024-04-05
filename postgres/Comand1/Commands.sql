@@ -38,3 +38,15 @@ CREATE TABLE launches (
 	id text NULL
 );
 CREATE PUBLICATION launches_pub FOR TABLE launches;
+CREATE TABLE capsules (
+	reuse_count numeric NULL,
+	water_landings numeric NULL,
+	land_landings numeric NULL,
+	last_update text NULL,
+	launches text[] NULL,
+	serial text NULL,
+	status text NULL,
+	"type" text NULL,
+	id text NULL
+);
+CREATE PUBLICATION capsules_pub FOR TABLE capsules;

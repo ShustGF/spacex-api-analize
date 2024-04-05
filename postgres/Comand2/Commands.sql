@@ -40,3 +40,15 @@ CREATE TABLE launches (
 	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
 );
 CREATE SUBSCRIPTION launches_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION launches_pub;
+CREATE TABLE capsules (
+	reuse_count numeric NULL,
+	water_landings numeric NULL,
+	land_landings numeric NULL,
+	last_update text NULL,
+	launches text[] NULL,
+	serial text NULL,
+	status text NULL,
+	"type" text NULL,
+	id text NULL
+);
+CREATE SUBSCRIPTION capsules_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION capsules_pub;
