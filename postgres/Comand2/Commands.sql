@@ -10,3 +10,33 @@ CREATE TABLE starlink_satellites (
 	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
 );
 CREATE SUBSCRIPTION starlink_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION starlink_pub;
+CREATE TABLE launches (
+	fairings jsonb NULL,
+	links jsonb NULL,
+	static_fire_date_utc timestamp NULL,
+	static_fire_date_unix numeric NULL,
+	tbd bool NULL,
+	net bool NULL,
+	"window" numeric NULL,
+	rocket text NULL,
+	success bool NULL,
+	failures _jsonb NULL,
+	details text NULL,
+	crew _text NULL,
+	ships _text NULL,
+	capsules _text NULL,
+	payloads _text NULL,
+	launchpad text NULL,
+	auto_update bool NULL,
+	flight_number numeric NULL,
+	"name" text NULL,
+	date_utc timestamp NULL,
+	date_unix numeric NULL,
+	date_local text NULL,
+	date_precision text NULL,
+	upcoming bool NULL,
+	cores _jsonb NULL,
+	id text NULL,
+	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
+);
+CREATE SUBSCRIPTION launches_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION launches_pub;
