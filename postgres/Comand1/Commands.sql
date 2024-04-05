@@ -64,3 +64,14 @@ CREATE TABLE cores (
 	id text NULL
 );
 CREATE PUBLICATION cores_pub FOR TABLE cores;
+
+CREATE TABLE crew (
+	name text NULL,
+	agency text NULL,
+	image text NULL,
+	wikipedia text NULL,
+	launches text[] NULL,
+	status text NULL,
+	id text NULL
+);
+CREATE PUBLICATION crew_pub FOR TABLE crew;

@@ -9,7 +9,7 @@ CREATE TABLE starlink_satellites (
 	id text NOT NULL,
 	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
 );
-CREATE SUBSCRIPTION starlink_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION starlink_pub;
+
 CREATE TABLE launches (
 	fairings jsonb NULL,
 	links jsonb NULL,
@@ -39,7 +39,7 @@ CREATE TABLE launches (
 	id text NULL,
 	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
 );
-CREATE SUBSCRIPTION launches_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION launches_pub;
+
 CREATE TABLE capsules (
 	reuse_count numeric NULL,
 	water_landings numeric NULL,
@@ -52,7 +52,7 @@ CREATE TABLE capsules (
 	id text NULL,
 	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
 );
-CREATE SUBSCRIPTION capsules_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION capsules_pub;
+
 CREATE TABLE cores (
 	"block" numeric NULL,
 	reuse_count numeric NULL,
@@ -67,4 +67,20 @@ CREATE TABLE cores (
 	id text NULL,
 	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
 );
+
+CREATE TABLE crew (
+	name text NULL,
+	agency text NULL,
+	image text NULL,
+	wikipedia text NULL,
+	launches text[] NULL,
+	status text NULL,
+	id text NULL,
+	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
+);
+
+CREATE SUBSCRIPTION starlink_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION starlink_pub;
+CREATE SUBSCRIPTION launches_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION launches_pub;
+CREATE SUBSCRIPTION capsules_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION capsules_pub;
 CREATE SUBSCRIPTION cores_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION cores_pub;
+CREATE SUBSCRIPTION crew_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION crew_pub;

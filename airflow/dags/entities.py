@@ -168,4 +168,24 @@ class Cores(Base):
     self.serial = serial
     self.status = status
     self.id = id
-    
+
+
+class Crew(Base):
+  __tablename__='crew'
+  name=Column(String)
+  agency=Column(String)
+  image=Column(String)
+  wikipedia=Column(String)
+  launches=Column(ARRAY(String))
+  status=Column(String)
+  id = Column(String, primary_key=True)
+
+  def __init__(self, name=None, agency=None, image=None, wikipedia=None, 
+              launches=None, status=None,  id=None):
+    self.name = name
+    self.agency = agency
+    self.image = image
+    self.wikipedia = wikipedia
+    self.launches = launches
+    self.status = status
+    self.id = id
