@@ -138,3 +138,34 @@ class Capsules(Base):
     self.status = status
     self.type = type
     self.id = id
+
+
+class Cores(Base):
+  __tablename__='cores'
+  block=Column(Numeric)
+  reuse_count=Column(Numeric)
+  rtls_attempts=Column(Numeric)
+  rtls_landings=Column(Numeric)
+  asds_attempts=Column(Numeric)
+  asds_landings=Column(Numeric)
+  last_update=Column(String)
+  launches=Column(ARRAY(String))
+  serial=Column(String)
+  status=Column(String)
+  id = Column(String, primary_key=True)
+
+  def __init__(self, block=None, reuse_count=None, rtls_attempts=None, rtls_landings=None, 
+               asds_attempts=None, asds_landings=None, last_update=None, launches=None, 
+               serial=None, status=None,  id=None):
+    self.block = block
+    self.reuse_count = reuse_count
+    self.rtls_attempts = rtls_attempts
+    self.rtls_landings = rtls_landings
+    self.asds_attempts = asds_attempts
+    self.asds_landings = asds_landings
+    self.last_update = last_update
+    self.launches = launches
+    self.serial = serial
+    self.status = status
+    self.id = id
+    

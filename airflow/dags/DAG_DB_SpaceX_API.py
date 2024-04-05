@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.utils.dates import days_ago
 
-from utils import get_starlink_object,  get_starlink_object, loads_data_in_db, get_launches, get_capsules
+from utils import get_starlink_object,  get_starlink_object, loads_data_in_db, get_launches, get_capsules, get_cores
 
 
 def _add_starlink_values_to_table():
@@ -16,10 +16,14 @@ def _add_launches_values_to_table():
 def _add_capsules_values_to_table():
   loads_data_in_db(get_capsules, url_capsules, postgres_conn_id='logical_rep')
 
+def _add_cores_values_to_table():
+  loads_data_in_db(get_cores, url_cores, postgres_conn_id='logical_rep')
+
 
 url_starlink = 'https://api.spacexdata.com/v4/starlink'
 url_launches = 'https://api.spacexdata.com/v4/launches'
 url_capsules = 'https://api.spacexdata.com/v4/capsules'
+url_cores =  'https://api.spacexdata.com/v4/cores'
 
 dag = DAG(
   dag_id='DAG_DB_SpaceX_API',
@@ -45,6 +49,14 @@ add_capsules_values_to_table  = PythonOperator(
   dag=dag,
 )
 
+add_cores_values_to_table  = PythonOperator(
+  task_id = 'add_cores_values_to_table',
+  python_callable=_add_cores_values_to_table,
+  dag=dag,
+)
+
+
+
 check_db_connection = PostgresOperator(
   task_id = 'check_db_connection',
   postgres_conn_id='logical_rep',
@@ -57,3 +69,4 @@ check_db_connection = PostgresOperator(
 check_db_connection >> add_starlink_values_to_table
 check_db_connection >> add_launches_values_to_table
 check_db_connection >> add_capsules_values_to_table
+check_db_connection >> add_cores_values_to_table

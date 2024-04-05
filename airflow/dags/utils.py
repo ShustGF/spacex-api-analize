@@ -4,7 +4,7 @@ import logging
 
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from sqlalchemy.orm import Session
-from entities import StarlinkSat, LaunchesSpaceX, Capsules
+from entities import StarlinkSat, LaunchesSpaceX, Capsules, Cores
 
 
 def get_data_from_url(url):
@@ -59,6 +59,7 @@ def get_launches(sat_json):
   )
   return launches
 
+
 def get_capsules(sat_json):
   capsules = Capsules(
     reuse_count=sat_json['reuse_count'],
@@ -73,6 +74,22 @@ def get_capsules(sat_json):
   )
   return capsules
 
+
+def get_cores(sat_json):
+  cores = Cores(
+    block=sat_json['block'],
+    reuse_count=sat_json['reuse_count'],
+    rtls_attempts=sat_json['rtls_attempts'],
+    rtls_landings=sat_json['rtls_landings'],
+    asds_attempts=sat_json['asds_attempts'],
+    asds_landings=sat_json['asds_landings'],
+    last_update=sat_json['last_update'],
+    launches=sat_json['launches'],
+    serial=sat_json['serial'],
+    status=sat_json['status'],
+    id=sat_json['id']
+  )
+  return cores
 
 
 def loads_data_in_db(function_class, url, postgres_conn_id):

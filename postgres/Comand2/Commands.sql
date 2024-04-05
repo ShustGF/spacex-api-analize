@@ -49,6 +49,22 @@ CREATE TABLE capsules (
 	serial text NULL,
 	status text NULL,
 	"type" text NULL,
-	id text NULL
+	id text NULL,
+	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
 );
 CREATE SUBSCRIPTION capsules_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION capsules_pub;
+CREATE TABLE cores (
+	"block" numeric NULL,
+	reuse_count numeric NULL,
+	rtls_attempts numeric NULL,
+	rtls_landings numeric NULL,
+	asds_attempts numeric NULL,
+	asds_landings numeric NULL,
+	last_update text NULL,
+	launches text[] NULL,
+	serial text NULL,
+	status text NULL,
+	id text NULL,
+	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
+);
+CREATE SUBSCRIPTION cores_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION cores_pub;
