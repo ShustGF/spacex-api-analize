@@ -1,10 +1,9 @@
 import json
 
 import requests
-from decouple import config
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+import logging
 
+from sqlalchemy.orm import Session
 from structure_json import StarlinkSat
 
 
@@ -28,21 +27,14 @@ def get_starlink_object(sat_json):
   )
   return starlink_sat
 
+def loads_data_in_db(function_class, url, engine):
+  logger = logging.getLogger(__name__)
+  session = Session(bind=engine)
+  json_values = json.loads(get_data_from_url(url))
+  session.add_all([function_class(json_value) for json_value in json_values])
+  session.commit()
+  logger.info(f'Данные от URL({url}) обрыботаны успешно')
+
 
 if __name__ == '__main__':
-  
-  db_name = config('POSTGRES_SENDER_DB')
-  db_user = config('POSTGRES_SENDER_USER')
-  db_pass = config('POSTGRES_SENDER_PASSWORD')
-  db_host = config('POSTGRES_SENDER_HOST')
-  db_port = config('POSTGRES_SENDER_PORT')
-  db_string = 'postgresql://{}:{}@{}:{}/{}'.format(db_user, db_pass, db_host, db_port, db_name)
-
-  url_starlink = 'https://api.spacexdata.com/v4/starlink'
-  
-  engine = create_engine(db_string)
-  session = Session(bind=engine)
-  session.add_all([get_starlink_object(json_sat) for json_sat in json.loads(get_data_from_url(url_starlink))])
-  session.commit()
-  print('Выполнено')
-
+  pass

@@ -1,53 +1,27 @@
-import json
-
 import airflow
 import airflow.utils
-import requests
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.postgres.operators.postgres import PostgresOperator
-from sqlalchemy.orm import Session
-
-from structure_json import StarlinkSat
 
 
-def get_data_from_url(url):
-  req_answer = requests.get(url)
-  if req_answer.status_code == 404:
-    raise AttributeError('Неверное значение URL-адреса')
-  return req_answer.text
+from starlink_sat import get_starlink_object,  get_starlink_object, loads_data_in_db
 
-
-def get_starlink_object(sat_json):
-  starlink_sat = StarlinkSat(
-    spacetrack=sat_json['spaceTrack'], 
-    version=sat_json['version'],
-    launch=sat_json['launch'],
-    longitude=sat_json['longitude'],
-    latitude=sat_json['latitude'],
-    height_km=sat_json['height_km'],
-    velocity_kms=sat_json['velocity_kms'],
-    id=sat_json['id']
-  )
-  return starlink_sat
 
 
 def _add_values_starlink_in_table():
   pg_hook = PostgresHook(postgres_conn_id='logical_rep')
   engine = pg_hook.get_sqlalchemy_engine()
-  session = Session(bind=engine)
-  session.add_all([get_starlink_object(json_sat) for json_sat in json.loads(get_data_from_url(url_starlink))])
-  session.commit()
-  print('Выполнено')
+  loads_data_in_db(get_starlink_object, url_starlink, engine)
 
 
 url_starlink = 'https://api.spacexdata.com/v4/starlink'
 
 dag = DAG(
     dag_id='get_objects_starlink',
-    start_date=airflow.utils.dates.days_ago(1),
+    start_date=airflow.utils.dates.days_ago(5),
     schedule_interval=None,
   )
 
