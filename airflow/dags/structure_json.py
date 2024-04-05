@@ -5,7 +5,6 @@ Base = declarative_base()
 
 
 class StarlinkSat(Base):
-  
   __tablename__ = 'starlink_satellites'
   spacetrack = Column(JSON)
   version = Column(String)
@@ -26,5 +25,4 @@ class StarlinkSat(Base):
     self.height_km = height_km
     self.velocity_kms = velocity_kms
     self.id = id
-
     

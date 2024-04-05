@@ -15,7 +15,7 @@ def get_data_from_url(url):
   return req_answer.text
 
 
-def get_object_starlink(sat_json):
+def get_starlink_object(sat_json):
   starlink_sat = StarlinkSat(
     spacetrack=sat_json['spaceTrack'], 
     version=sat_json['version'],
@@ -42,7 +42,7 @@ if __name__ == '__main__':
   
   engine = create_engine(db_string)
   session = Session(bind=engine)
-  session.add_all([get_object_starlink(json_sat) for json_sat in json.loads(get_data_from_url(url_starlink))])
+  session.add_all([get_starlink_object(json_sat) for json_sat in json.loads(get_data_from_url(url_starlink))])
   session.commit()
   print('Выполнено')
 
