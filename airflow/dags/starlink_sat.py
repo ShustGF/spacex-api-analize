@@ -1,5 +1,4 @@
 import json
-
 import requests
 import logging
 
@@ -26,6 +25,7 @@ def get_starlink_object(sat_json):
     id=sat_json['id']
   )
   return starlink_sat
+
 
 def loads_data_in_db(function_class, url, engine):
   logger = logging.getLogger(__name__)
