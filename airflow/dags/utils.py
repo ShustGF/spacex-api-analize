@@ -1,9 +1,5 @@
-import json
 import requests
-import logging
 
-from airflow.providers.postgres.hooks.postgres import PostgresHook
-from sqlalchemy.orm import Session
 from entities import StarlinkSat, LaunchesSpaceX, Capsules, Cores, Crew
 
 
@@ -14,7 +10,7 @@ def get_data_from_url(url):
   return req_answer.text
 
 
-def get_starlink_object(sat_json):
+def get_starlinks(sat_json):
   starlink_sat = StarlinkSat(
     spacetrack=sat_json['spaceTrack'], 
     version=sat_json['version'],
@@ -104,17 +100,4 @@ def get_crew(sat_json):
   )
   return crew
 
-
-def loads_data_in_db(function_class, url, postgres_conn_id):
-  logger = logging.getLogger(__name__)
-  pg_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
-  engine = pg_hook.get_sqlalchemy_engine()
-  session = Session(bind=engine)
-  json_values = json.loads(get_data_from_url(url))
-  session.add_all([function_class(json_value) for json_value in json_values])
-  session.commit()
-  logger.info(f'Данные от URL({url}) обработаны успешно')
-
-
-if __name__ == '__main__':
-  pass
+  

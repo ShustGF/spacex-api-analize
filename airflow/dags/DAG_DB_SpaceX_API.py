@@ -1,82 +1,108 @@
+import json
+import logging
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.utils.dates import days_ago
+from airflow.providers.postgres.hooks.postgres import PostgresHook
+from sqlalchemy.orm import Session
 
-from utils import get_starlink_object,  get_starlink_object, loads_data_in_db, get_launches, get_capsules, get_cores, get_crew
-
-
-def _add_starlink_values_to_table():
-  loads_data_in_db(get_starlink_object, url_starlink, postgres_conn_id='logical_rep')
-
-def _add_launches_values_to_table():
-  loads_data_in_db(get_launches, url_launches, postgres_conn_id='logical_rep')
-
-def _add_capsules_values_to_table():
-  loads_data_in_db(get_capsules, url_capsules, postgres_conn_id='logical_rep')
-
-def _add_cores_values_to_table():
-  loads_data_in_db(get_cores, url_cores, postgres_conn_id='logical_rep')
-
-def _add_crew_values_to_table():
-  loads_data_in_db(get_crew, url_crew, postgres_conn_id='logical_rep')
+import utils as u
 
 
-url_starlink = 'https://api.spacexdata.com/v4/starlink'
-url_launches = 'https://api.spacexdata.com/v4/launches'
-url_capsules = 'https://api.spacexdata.com/v4/capsules'
-url_cores =  'https://api.spacexdata.com/v4/cores'
-url_crew = 'https://api.spacexdata.com/v4/crew'
+def load_data_in_db(function_class, url, postgres_conn_id, logger):
+  pg_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
+  engine = pg_hook.get_sqlalchemy_engine()
+  session = Session(bind=engine)
+  json_values = json.loads(u.get_data_from_url(url))
+  session.add_all([function_class(json_value) for json_value in json_values])
+  session.commit()
+  logger.info(f'Данные от URL({url}) обработаны успешно')
+
+
+logger = logging.getLogger(__name__)
+host = 'https://api.spacexdata.com/v4'
 
 dag = DAG(
-  dag_id='DAG_DB_SpaceX_API',
+  dag_id='dag_db_spacex_api',
   start_date=days_ago(5),
   schedule_interval=None,
 )
 
-add_starlink_values_to_table  = PythonOperator(
-  task_id = 'add_starlink_values_to_table',
-  python_callable=_add_starlink_values_to_table,
+add_starlink_values_to_table = PythonOperator(
+  task_id='add_starlink_values_to_table',
+  python_callable=load_data_in_db,
+  op_kwargs={
+    'function_class': u.get_starlinks,
+    'url': f'{host}/starlink',
+    'postgres_conn_id': 'logical_rep',
+    'logger': logger
+  },
   dag=dag,
 )
 
 add_launches_values_to_table  = PythonOperator(
-  task_id = 'add_launches_values_to_table',
-  python_callable=_add_launches_values_to_table,
+  task_id='add_launches_values_to_table',
+  python_callable=load_data_in_db,
+  op_kwargs={
+    'function_class': u.get_launches,
+    'url': f'{host}/launches',
+    'postgres_conn_id': 'logical_rep',
+    'logger': logger
+  },
   dag=dag,
 )
 
 add_capsules_values_to_table  = PythonOperator(
-  task_id = 'add_capsules_values_to_table',
-  python_callable=_add_capsules_values_to_table,
+  task_id='add_capsules_values_to_table',
+  python_callable=load_data_in_db,
+  op_kwargs={
+    'function_class': u.get_capsules,
+    'url': f'{host}/capsules',
+    'postgres_conn_id': 'logical_rep',
+    'logger': logger
+  },
   dag=dag,
 )
 
 add_cores_values_to_table  = PythonOperator(
-  task_id = 'add_cores_values_to_table',
-  python_callable=_add_cores_values_to_table,
+  task_id='add_cores_values_to_table',
+  python_callable=load_data_in_db,
+  op_kwargs={
+    'function_class': u.get_cores,
+    'url': f'{host}/cores',
+    'postgres_conn_id': 'logical_rep',
+    'logger': logger
+  },
   dag=dag,
 )
 
 add_crew_values_to_table  = PythonOperator(
-  task_id = 'add_crew_values_to_table',
-  python_callable=_add_crew_values_to_table,
+  task_id='add_crew_values_to_table',
+  python_callable=load_data_in_db,
+  op_kwargs={
+    'function_class': u.get_crew,
+    'url': f'{host}/crew',
+    'postgres_conn_id': 'logical_rep',
+    'logger': logger
+  },
   dag=dag,
 )
 
 check_db_connection = PostgresOperator(
-  task_id = 'check_db_connection',
+  task_id='check_db_connection',
   postgres_conn_id='logical_rep',
   sql='''
-  SELECT 1
+    SELECT 1
   ''',
   dag=dag,
 ) 
 
-check_db_connection >> add_starlink_values_to_table
-check_db_connection >> add_launches_values_to_table
-check_db_connection >> add_capsules_values_to_table
-check_db_connection >> add_cores_values_to_table
-check_db_connection >> add_crew_values_to_table
+check_db_connection >> \
+add_starlink_values_to_table >> \
+add_launches_values_to_table >> \
+add_capsules_values_to_table >> \
+add_cores_values_to_table >> \
+add_crew_values_to_table
 

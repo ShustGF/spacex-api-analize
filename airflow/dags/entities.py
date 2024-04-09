@@ -91,11 +91,11 @@ class LaunchesSpaceX(Base):
     self.id = id
 
     def __current_datetime_utc(self, value):
-      if value == None:
+      if value is None:
         return None
       else:
         format_time_utc = '%Y-%m-%dT%H:%M:%S.%fZ'
-        return datetime.strptime(value,format_time_utc)
+        return datetime.strptime(value, format_time_utc)
 
     @property
     def static_fire_date_utc(self):
@@ -103,7 +103,7 @@ class LaunchesSpaceX(Base):
     
     @static_fire_date_utc.setter
     def static_fire_date_utc(name, value):
-      self._static_fire_date_utc=__current_datetime_utc(value=value)
+      self._static_fire_date_utc = __current_datetime_utc(value=value)
 
 
     @property
@@ -113,18 +113,18 @@ class LaunchesSpaceX(Base):
     @date_utc.setter
     def date_utc(name, value):
       if value == None:
-        self._date_utc=__current_datetime_utc(value=value)
+        self._date_utc = __current_datetime_utc(value=value)
 
 class Capsules(Base):
-  __tablename__='capsules'
-  reuse_count=Column(Numeric)
-  water_landings=Column(Numeric)
-  land_landings=Column(Numeric)
-  last_update=Column(String)
-  launches=Column(ARRAY(String))
-  serial=Column(String)
-  status=Column(String)
-  type=Column(String)
+  __tablename__ = 'capsules'
+  reuse_count = Column(Numeric)
+  water_landings = Column(Numeric)
+  land_landings = Column(Numeric)
+  last_update = Column(String)
+  launches = Column(ARRAY(String))
+  serial = Column(String)
+  status = Column(String)
+  type = Column(String)
   id = Column(String, primary_key=True)
 
   def __init__(self, reuse_count=None, water_landings=None, land_landings=None, last_update=None, 
@@ -141,22 +141,22 @@ class Capsules(Base):
 
 
 class Cores(Base):
-  __tablename__='cores'
-  block=Column(Numeric)
-  reuse_count=Column(Numeric)
-  rtls_attempts=Column(Numeric)
-  rtls_landings=Column(Numeric)
-  asds_attempts=Column(Numeric)
-  asds_landings=Column(Numeric)
-  last_update=Column(String)
-  launches=Column(ARRAY(String))
-  serial=Column(String)
-  status=Column(String)
+  __tablename__ = 'cores'
+  block = Column(Numeric)
+  reuse_count = Column(Numeric)
+  rtls_attempts = Column(Numeric)
+  rtls_landings = Column(Numeric)
+  asds_attempts = Column(Numeric)
+  asds_landings = Column(Numeric)
+  last_update = Column(String)
+  launches = Column(ARRAY(String))
+  serial = Column(String)
+  status = Column(String)
   id = Column(String, primary_key=True)
 
   def __init__(self, block=None, reuse_count=None, rtls_attempts=None, rtls_landings=None, 
                asds_attempts=None, asds_landings=None, last_update=None, launches=None, 
-               serial=None, status=None,  id=None):
+               serial=None, status=None, id=None):
     self.block = block
     self.reuse_count = reuse_count
     self.rtls_attempts = rtls_attempts
@@ -172,16 +172,16 @@ class Cores(Base):
 
 class Crew(Base):
   __tablename__='crew'
-  name=Column(String)
-  agency=Column(String)
-  image=Column(String)
-  wikipedia=Column(String)
-  launches=Column(ARRAY(String))
-  status=Column(String)
+  name = Column(String)
+  agency = Column(String)
+  image = Column(String)
+  wikipedia = Column(String)
+  launches = Column(ARRAY(String))
+  status = Column(String)
   id = Column(String, primary_key=True)
 
   def __init__(self, name=None, agency=None, image=None, wikipedia=None, 
-              launches=None, status=None,  id=None):
+              launches=None, status=None, id=None):
     self.name = name
     self.agency = agency
     self.image = image
