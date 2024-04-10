@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 import utils as u
 
 
-def load_data_in_db(function_class, url, postgres_conn_id, logger):
+def load_data_in_db(function_class, url, postgres_conn_id):
   pg_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
   engine = pg_hook.get_sqlalchemy_engine()
   session = Session(bind=engine)
@@ -37,7 +37,6 @@ add_starlink_values_to_table = PythonOperator(
     'function_class': u.get_starlinks,
     'url': f'{host}/starlink',
     'postgres_conn_id': 'logical_rep',
-    'logger': logger
   },
   dag=dag,
 )
@@ -49,7 +48,6 @@ add_launches_values_to_table  = PythonOperator(
     'function_class': u.get_launches,
     'url': f'{host}/launches',
     'postgres_conn_id': 'logical_rep',
-    'logger': logger
   },
   dag=dag,
 )
@@ -61,7 +59,6 @@ add_capsules_values_to_table  = PythonOperator(
     'function_class': u.get_capsules,
     'url': f'{host}/capsules',
     'postgres_conn_id': 'logical_rep',
-    'logger': logger
   },
   dag=dag,
 )
@@ -73,7 +70,6 @@ add_cores_values_to_table  = PythonOperator(
     'function_class': u.get_cores,
     'url': f'{host}/cores',
     'postgres_conn_id': 'logical_rep',
-    'logger': logger
   },
   dag=dag,
 )
@@ -85,7 +81,6 @@ add_crew_values_to_table  = PythonOperator(
     'function_class': u.get_crew,
     'url': f'{host}/crew',
     'postgres_conn_id': 'logical_rep',
-    'logger': logger
   },
   dag=dag,
 )
