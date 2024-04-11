@@ -1,4 +1,4 @@
-'''Объявление объектов данных'''
+"""Объявление объектов данных"""
 from sqlalchemy import Column, Numeric, String, JSON, Boolean, ARRAY, TIMESTAMP
 from sqlalchemy.orm import declarative_base
 
@@ -8,7 +8,7 @@ Base = declarative_base()
 
 
 class StarlinkSat(Base):
-    __tablename__ = 'starlink_satellites'
+    __tablename__ = "starlink_satellites"
     spacetrack = Column(JSON)
     version = Column(String)
     launch = Column(String)
@@ -31,7 +31,7 @@ class StarlinkSat(Base):
 
 
 class LaunchesSpaceX(Base):
-    __tablename__ = 'launches'
+    __tablename__ = "launches"
     fairings = Column(JSON)
     links = Column(JSON)
     static_fire_date_utc = Column(TIMESTAMP)
@@ -97,7 +97,7 @@ class LaunchesSpaceX(Base):
             if value is None:
                 return None
             else:
-                format_time_utc = '%Y-%m-%dT%H:%M:%S.%fZ'
+                format_time_utc = "%Y-%m-%dT%H:%M:%S.%fZ"
                 return datetime.strptime(value, format_time_utc)
 
         @property
@@ -119,7 +119,7 @@ class LaunchesSpaceX(Base):
 
 
 class Capsules(Base):
-    __tablename__ = 'capsules'
+    __tablename__ = "capsules"
     reuse_count = Column(Numeric)
     water_landings = Column(Numeric)
     land_landings = Column(Numeric)
@@ -145,7 +145,7 @@ class Capsules(Base):
 
 
 class Cores(Base):
-    __tablename__ = 'cores'
+    __tablename__ = "cores"
     block = Column(Numeric)
     reuse_count = Column(Numeric)
     rtls_attempts = Column(Numeric)
@@ -176,7 +176,7 @@ class Cores(Base):
 
 
 class Crew(Base):
-    __tablename__ = 'crew'
+    __tablename__ = "crew"
     name = Column(String)
     agency = Column(String)
     image = Column(String)
