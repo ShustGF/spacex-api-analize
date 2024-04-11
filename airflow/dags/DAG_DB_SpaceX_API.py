@@ -93,7 +93,7 @@ check_db_connection = PostgresOperator(
     SELECT 1
   ''',
   dag=dag,
-) 
+)
 
 (
   check_db_connection >>

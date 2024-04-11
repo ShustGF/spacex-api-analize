@@ -1,3 +1,4 @@
+'''Объявление объектов данных'''
 from sqlalchemy import Column, Numeric, String, JSON, Boolean, ARRAY, TIMESTAMP
 from sqlalchemy.orm import declarative_base
 
