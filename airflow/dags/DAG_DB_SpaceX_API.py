@@ -1,4 +1,5 @@
 """DAG по работе с API SpaceX"""
+
 import json
 import logging
 
@@ -95,10 +96,10 @@ check_db_connection = PostgresOperator(
 )
 
 (
-    check_db_connection >>
-    add_starlink_values_to_table >>
-    add_launches_values_to_table >>
-    add_capsules_values_to_table >>
-    add_cores_values_to_table >>
-    add_crew_values_to_table
+    check_db_connection
+    >> add_starlink_values_to_table
+    >> add_launches_values_to_table
+    >> add_capsules_values_to_table
+    >> add_cores_values_to_table
+    >> add_crew_values_to_table
 )

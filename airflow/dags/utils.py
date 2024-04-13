@@ -1,7 +1,7 @@
 """Файл с функциями для работы с API SpaceX"""
 
 import requests
-from entities import Capsules, Cores, Crew, LaunchesSpaceX, StarlinkSat   
+from entities import Capsules, Cores, Crew, LaunchesSpaceX, StarlinkSat
 
 
 def get_data_from_url(url: str):

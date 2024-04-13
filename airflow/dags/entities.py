@@ -1,7 +1,8 @@
 """Объявление объектов данных"""
+
 from datetime import datetime
 
-from sqlalchemy import ARRAY, JSON, TIMESTAMP, Boolean, Column, Numeric, String    
+from sqlalchemy import ARRAY, JSON, TIMESTAMP, Boolean, Column, Numeric, String
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -18,16 +19,17 @@ class StarlinkSat(Base):
     velocity_kms = Column(Numeric)
     id = Column(String, primary_key=True)
 
-    def __init__(self,
-                 spacetrack,
-                 version=None,
-                 launch=None,
-                 longitude=None,
-                 latitude=None,
-                 height_km=None,
-                 velocity_kms=None,
-                 id=None
-                 ):
+    def __init__(
+            self,
+            spacetrack,
+            version=None,
+            launch=None,
+            longitude=None,
+            latitude=None,
+            height_km=None,
+            velocity_kms=None,
+            id=None
+    ):
         self.spacetrack = spacetrack
         self.version = version
         self.launch = launch
@@ -67,34 +69,35 @@ class LaunchesSpaceX(Base):
     cores = Column(ARRAY(JSON))
     id = Column(String, primary_key=True)
 
-    def __init__(self,
-                 fairings=None,
-                 links=None,
-                 static_fire_date_utc=None,
-                 static_fire_date_unix=None,
-                 tbd=None,
-                 net=None,
-                 window=None,
-                 rocket=None,
-                 success=None,
-                 failures=[],
-                 details=None,
-                 crew=None,
-                 ships=None,
-                 capsules=None,
-                 payloads=None,
-                 launchpad=None,
-                 auto_update=None,
-                 flight_number=None,
-                 name=None,
-                 date_utc=None,
-                 date_unix=None,
-                 date_local=None,
-                 date_precision=None,
-                 upcoming=None,
-                 cores=None,
-                 id=None,
-                 ):
+    def __init__(
+            self,
+            fairings=None,
+            links=None,
+            static_fire_date_utc=None,
+            static_fire_date_unix=None,
+            tbd=None,
+            net=None,
+            window=None,
+            rocket=None,
+            success=None,
+            failures=[],
+            details=None,
+            crew=None,
+            ships=None,
+            capsules=None,
+            payloads=None,
+            launchpad=None,
+            auto_update=None,
+            flight_number=None,
+            name=None,
+            date_utc=None,
+            date_unix=None,
+            date_local=None,
+            date_precision=None,
+            upcoming=None,
+            cores=None,
+            id=None,
+    ):
         self.fairings = fairings
         self.links = links
         self.static_fire_date_utc = static_fire_date_utc
@@ -159,17 +162,18 @@ class Capsules(Base):
     type = Column(String)
     id = Column(String, primary_key=True)
 
-    def __init__(self,
-                 reuse_count=None,
-                 water_landings=None,
-                 land_landings=None,
-                 last_update=None,
-                 launches=None,
-                 serial=None,
-                 status=None,
-                 type=None,
-                 id=None
-                 ):
+    def __init__(
+            self,
+            reuse_count=None,
+            water_landings=None,
+            land_landings=None,
+            last_update=None,
+            launches=None,
+            serial=None,
+            status=None,
+            type=None,
+            id=None
+    ):
         self.reuse_count = reuse_count
         self.water_landings = water_landings
         self.land_landings = land_landings
@@ -195,19 +199,20 @@ class Cores(Base):
     status = Column(String)
     id = Column(String, primary_key=True)
 
-    def __init__(self,
-                 block=None,
-                 reuse_count=None,
-                 rtls_attempts=None,
-                 rtls_landings=None,
-                 asds_attempts=None,
-                 asds_landings=None,
-                 last_update=None,
-                 launches=None,
-                 serial=None,
-                 status=None,
-                 id=None
-                 ):
+    def __init__(
+            self,
+            block=None,
+            reuse_count=None,
+            rtls_attempts=None,
+            rtls_landings=None,
+            asds_attempts=None,
+            asds_landings=None,
+            last_update=None,
+            launches=None,
+            serial=None,
+            status=None,
+            id=None
+    ):
         self.block = block
         self.reuse_count = reuse_count
         self.rtls_attempts = rtls_attempts
@@ -231,15 +236,16 @@ class Crew(Base):
     status = Column(String)
     id = Column(String, primary_key=True)
 
-    def __init__(self,
-                 name=None,
-                 agency=None,
-                 image=None,
-                 wikipedia=None,
-                 launches=None,
-                 status=None,
-                 id=None
-                 ):
+    def __init__(
+            self,
+            name=None,
+            agency=None,
+            image=None,
+            wikipedia=None,
+            launches=None,
+            status=None,
+            id=None
+    ):
         self.name = name
         self.agency = agency
         self.image = image
