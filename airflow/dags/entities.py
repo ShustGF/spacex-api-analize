@@ -28,7 +28,7 @@ class StarlinkSat(Base):
         latitude=None,
         height_km=None,
         velocity_kms=None,
-        id=None
+        id=None,
     ):
         self.spacetrack = spacetrack
         self.version = version
@@ -172,7 +172,7 @@ class Capsules(Base):
         serial=None,
         status=None,
         type=None,
-        id=None
+        id=None,
     ):
         self.reuse_count = reuse_count
         self.water_landings = water_landings
@@ -211,7 +211,7 @@ class Cores(Base):
         launches=None,
         serial=None,
         status=None,
-        id=None
+        id=None,
     ):
         self.block = block
         self.reuse_count = reuse_count
@@ -244,7 +244,7 @@ class Crew(Base):
         wikipedia=None,
         launches=None,
         status=None,
-        id=None
+        id=None,
     ):
         self.name = name
         self.agency = agency
