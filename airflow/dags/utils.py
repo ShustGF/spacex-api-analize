@@ -1,8 +1,7 @@
 """Файл с функциями для работы с API SpaceX"""
 
 import requests
-
-from entities import StarlinkSat, LaunchesSpaceX, Capsules, Cores, Crew
+from entities import Capsules, Cores, Crew, LaunchesSpaceX, StarlinkSat   
 
 
 def get_data_from_url(url: str):
@@ -23,7 +22,7 @@ def get_starlinks(sat_json):
         latitude=sat_json["latitude"],
         height_km=sat_json["height_km"],
         velocity_kms=sat_json["velocity_kms"],
-        id=sat_json["id"]
+        id=sat_json["id"],
     )
     return starlink_sat
 
@@ -56,7 +55,7 @@ def get_launches(sat_json):
         date_precision=sat_json["date_precision"],
         upcoming=sat_json["upcoming"],
         cores=sat_json["cores"],
-        id=sat_json["id"]
+        id=sat_json["id"],
     )
     return launches
 
@@ -72,7 +71,7 @@ def get_capsules(sat_json):
         serial=sat_json["serial"],
         status=sat_json["status"],
         type=sat_json["type"],
-        id=sat_json["id"]
+        id=sat_json["id"],
     )
     return capsules
 
@@ -90,7 +89,7 @@ def get_cores(sat_json):
         launches=sat_json["launches"],
         serial=sat_json["serial"],
         status=sat_json["status"],
-        id=sat_json["id"]
+        id=sat_json["id"],
     )
     return cores
 
@@ -104,6 +103,6 @@ def get_crew(sat_json):
         wikipedia=sat_json["wikipedia"],
         launches=sat_json["launches"],
         status=sat_json["status"],
-        id=sat_json["id"]
+        id=sat_json["id"],
     )
     return crew
