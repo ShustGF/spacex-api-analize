@@ -2,8 +2,13 @@
 name: Lint
 
 on:  # yamllint disable-line rule:truthy
-  push: null
-  pull_request: null
+  push:
+    branches:
+      - develop
+
+  pull_request:
+    branches:
+      - master
 
 permissions: { }
 
@@ -30,5 +35,8 @@ jobs:
         uses: super-linter/super-linter@v6.3.1  # x-release-please-version
         env:
           # To report GitHub Actions status checks
+          VALIDATE_PYTHON_BLACK: true
+          VALIDATE_PYTHON_FLAKE8: true
+          VALIDATE_PYTHON_ISORT: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ...
