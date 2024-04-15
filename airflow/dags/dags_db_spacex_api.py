@@ -12,7 +12,7 @@ from airflow.utils.dates import days_ago
 from sqlalchemy.orm import Session
 
 
-def load_data_in_db(function_class, url, postgres_conn_id):
+def load_data_to_db(function_class, url, postgres_conn_id):
     pg_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     engine = pg_hook.get_sqlalchemy_engine()
     session = Session(bind=engine)
@@ -26,14 +26,14 @@ logger = logging.getLogger(__name__)
 host = "https://api.spacexdata.com/v4"
 
 dag = DAG(
-    dag_id="dag_db_spacex_api",
+    dag_id="dags_db_spacex_api",
     start_date=days_ago(5),
     schedule_interval=None,
 )
 
 add_starlink_values_to_table = PythonOperator(
     task_id="add_starlink_values_to_table",
-    python_callable=load_data_in_db,
+    python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_starlinks,
         "url": f"{host}/starlink",
@@ -44,7 +44,7 @@ add_starlink_values_to_table = PythonOperator(
 
 add_launches_values_to_table = PythonOperator(
     task_id="add_launches_values_to_table",
-    python_callable=load_data_in_db,
+    python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_launches,
         "url": f"{host}/launches",
@@ -55,7 +55,7 @@ add_launches_values_to_table = PythonOperator(
 
 add_capsules_values_to_table = PythonOperator(
     task_id="add_capsules_values_to_table",
-    python_callable=load_data_in_db,
+    python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_capsules,
         "url": f"{host}/capsules",
@@ -66,7 +66,7 @@ add_capsules_values_to_table = PythonOperator(
 
 add_cores_values_to_table = PythonOperator(
     task_id="add_cores_values_to_table",
-    python_callable=load_data_in_db,
+    python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_cores,
         "url": f"{host}/cores",
@@ -77,7 +77,7 @@ add_cores_values_to_table = PythonOperator(
 
 add_crew_values_to_table = PythonOperator(
     task_id="add_crew_values_to_table",
-    python_callable=load_data_in_db,
+    python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_crew,
         "url": f"{host}/crew",
