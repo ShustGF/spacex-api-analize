@@ -1,8 +1,18 @@
 """Файл с функциями для работы с API SpaceX"""
 
 import requests
-from entities import Capsules, Cores, Crew, Landpads, LaunchesSpaceX
-from entities import Launchpads, Payload, Ships, StarlinkSat, Rockets
+from entities import (
+    Capsules,
+    Cores,
+    Crew,
+    Landpads,
+    LaunchesSpaceX,
+    Launchpads,
+    Payload,
+    Ships,
+    StarlinkSat,
+    Rockets
+)
 
 
 def get_data_from_url(url: str):
