@@ -1,5 +1,7 @@
 /airflow/logs/
 /airflow/dags/__pycache__/
+/clickhouse/ch_logs/
+/clickhouse/ch_data/
 
 # Airflow configuration
 airflow.cfg
