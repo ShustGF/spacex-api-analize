@@ -2,16 +2,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import (
-    ARRAY,
-    JSON,
-    TIMESTAMP,
-    Boolean,
-    Column,
-    Integer,
-    Numeric,
-    String
-)
+from sqlalchemy import ARRAY, JSON, TIMESTAMP, Boolean, Column, Integer, Numeric, String
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()

@@ -9,9 +9,9 @@ from entities import (
     LaunchesSpaceX,
     Launchpads,
     Payload,
+    Rockets,
     Ships,
     StarlinkSat,
-    Rockets
 )
 
 
