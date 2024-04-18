@@ -2,7 +2,8 @@
 
 from datetime import datetime
 
-from sqlalchemy import ARRAY, JSON, TIMESTAMP, Boolean, Column, Numeric, String
+from sqlalchemy import ARRAY, JSON, TIMESTAMP
+from sqlalchemy import Boolean, Column, Integer, Numeric, String
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -252,4 +253,362 @@ class Crew(Base):
         self.wikipedia = wikipedia
         self.launches = launches
         self.status = status
+        self.id = id
+
+
+class Landpads(Base):
+    __tablename__ = "landpads"
+    name = Column(String)
+    full_name = Column(String)
+    status = Column(String)
+    type = Column(String)
+    locality = Column(String)
+    region = Column(String)
+    latitude = Column(Numeric)
+    longitude = Column(Numeric)
+    landing_attempts = Column(Integer)
+    landing_successes = Column(Integer)
+    wikipedia = Column(String)
+    details = Column(String)
+    launches = Column(ARRAY(String))
+    id = Column(String, primary_key=True)
+
+    def __init__(
+        self,
+        name=None,
+        full_name=None,
+        status=None,
+        type=None,
+        locality=None,
+        region=None,
+        latitude=None,
+        longitude=None,
+        landing_attempts=None,
+        landing_successes=None,
+        wikipedia=None,
+        details=None,
+        launches=None,
+        id=None,
+    ):
+        self.name = name
+        self.full_name = full_name
+        self.status = status
+        self.type = type
+        self.locality = locality
+        self.region = region
+        self.latitude = latitude
+        self.longitude = longitude
+        self.landing_attempts = landing_attempts
+        self.landing_successes = landing_successes
+        self.wikipedia = wikipedia
+        self.details = details
+        self.launches = launches
+        self.id = id
+
+
+class Launchpads(Base):
+    __tablename__ = "launchpads"
+    name = Column(String)
+    full_name = Column(String)
+    locality = Column(String)
+    region = Column(String)
+    timezone = Column(String)
+    latitude = Column(Numeric)
+    longitude = Column(Numeric)
+    launch_attempts = Column(Integer)
+    launch_successes = Column(Integer)
+    rockets = Column(ARRAY(String))
+    launches = Column(ARRAY(String))
+    status = Column(String)
+    id = Column(String, primary_key=True)
+
+    def __init__(
+        self,
+        name=None,
+        full_name=None,
+        locality=None,
+        region=None,
+        timezone=None,
+        latitude=None,
+        longitude=None,
+        launch_attempts=None,
+        launch_successes=None,
+        rockets=None,
+        launches=None,
+        status=None,
+        id=None,
+    ):
+        self.name = name
+        self.full_name = full_name
+        self.locality = locality
+        self.region = region
+        self.timezone = timezone
+        self.latitude = latitude
+        self.longitude = longitude
+        self.launch_attempts = launch_attempts
+        self.launch_successes = launch_successes
+        self.rockets = rockets
+        self.launches = launches
+        self.status = status
+        self.id = id
+
+
+class Payload(Base):
+    __tablename__ = "payload"
+    dragon = Column(JSON)
+    name = Column(String)
+    type = Column(String)
+    reused = Column(Boolean)
+    launch = Column(String)
+    customers = Column(ARRAY(String))
+    norad_ids = Column(ARRAY(Integer))
+    nationalities = Column(ARRAY(String))
+    manufacturers = Column(ARRAY(String))
+    mass_kg = Column(Numeric)
+    mass_lbs = Column(Numeric)
+    orbit = Column(String)
+    reference_system = Column(String)
+    regime = Column(String)
+    longitude = Column(Numeric)
+    semi_major_axis_km = Column(Numeric)
+    eccentricity = Column(Numeric)
+    periapsis_km = Column(Numeric)
+    apoapsis_km = Column(Numeric)
+    inclination_deg = Column(Numeric)
+    period_min = Column(Numeric)
+    lifespan_years = Column(Integer)
+    epoch = Column(TIMESTAMP)
+    mean_motion = Column(Numeric)
+    raan = Column(Numeric)
+    arg_of_pericenter = Column(Numeric)
+    mean_anomaly = Column(Numeric)
+    id = Column(String, primary_key=True)
+
+    def __init__(
+        self,
+        dragon=None,
+        name=None,
+        type=None,
+        reused=None,
+        launch=None,
+        customers=None,
+        norad_ids=None,
+        nationalities=None,
+        manufacturers=None,
+        mass_kg=None,
+        mass_lbs=None,
+        orbit=None,
+        reference_system=None,
+        regime=None,
+        longitude=None,
+        semi_major_axis_km=None,
+        eccentricity=None,
+        periapsis_km=None,
+        apoapsis_km=None,
+        inclination_deg=None,
+        period_min=None,
+        lifespan_years=None,
+        epoch=None,
+        mean_motion=None,
+        raan=None,
+        arg_of_pericenter=None,
+        mean_anomaly=None,
+        id=None,
+    ):
+        self.dragon = dragon
+        self.name = name
+        self.type = type
+        self.reused = reused
+        self.launch = launch
+        self.customers = customers
+        self.norad_ids = norad_ids
+        self.nationalities = nationalities
+        self.manufacturers = manufacturers
+        self.mass_kg = mass_kg
+        self.mass_lbs = mass_lbs
+        self.orbit = orbit
+        self.reference_system = reference_system
+        self.regime = regime
+        self.longitude = longitude
+        self.semi_major_axis_km = semi_major_axis_km
+        self.eccentricity = eccentricity
+        self.periapsis_km = periapsis_km
+        self.apoapsis_km = apoapsis_km
+        self.inclination_deg = inclination_deg
+        self.period_min = period_min
+        self.lifespan_years = lifespan_years
+        self.epoch = epoch
+        self.mean_motion = mean_motion
+        self.raan = raan
+        self.arg_of_pericenter = arg_of_pericenter
+        self.mean_anomaly = mean_anomaly
+        self.id = id
+
+        def __current_datetime_utc(value):
+            if value is None:
+                return None
+            else:
+                format_time_utc = "%Y-%m-%dT%H:%M:%S.%fZ"
+                return datetime.strptime(value, format_time_utc)
+
+        @property
+        def epoch(self):
+            return self._epoch
+
+        @epoch.setter
+        def epoch(self, value):
+            self._epoch = __current_datetime_utc(value=value)
+
+
+class Ships(Base):
+    __tablename__ = "ships"
+    legacy_id = Column(String)
+    model = Column(String)
+    type = Column(String)
+    roles = Column(ARRAY(String))
+    imo = Column(Integer)
+    mmsi = Column(Integer)
+    abs = Column(Integer)
+    class_ship = Column(Integer)
+    mass_kg = Column(Integer)
+    mass_lbs = Column(Integer)
+    year_built = Column(Integer)
+    home_port = Column(String)
+    status = Column(String)
+    speed_kn = Column(Numeric)
+    course_deg = Column(Numeric)
+    latitude = Column(Numeric)
+    longitude = Column(Numeric)
+    last_ais_update = Column(String)
+    link = Column(String)
+    image = Column(String)
+    launches = Column(ARRAY(String))
+    name = Column(String)
+    active = Column(Boolean)
+    id = Column(String, primary_key=True)
+
+    def __init__(
+        self,
+        legacy_id=None,
+        model=None,
+        type=None,
+        roles=None,
+        imo=None,
+        mmsi=None,
+        abs=None,
+        class_ship=None,
+        mass_kg=None,
+        mass_lbs=None,
+        year_built=None,
+        home_port=None,
+        status=None,
+        speed_kn=None,
+        course_deg=None,
+        latitude=None,
+        longitude=None,
+        last_ais_update=None,
+        link=None,
+        image=None,
+        launches=None,
+        name=None,
+        active=None,
+        id=None,
+    ):
+        self.legacy_id = legacy_id
+        self.model = model
+        self.type = type
+        self.roles = roles
+        self.imo = imo
+        self.mmsi = mmsi
+        self.abs = abs
+        self.class_ship = class_ship
+        self.mass_kg = mass_kg
+        self.mass_lbs = mass_lbs
+        self.year_built = year_built
+        self.home_port = home_port
+        self.status = status
+        self.speed_kn = speed_kn
+        self.course_deg = course_deg
+        self.latitude = latitude
+        self.longitude = longitude
+        self.last_ais_update = last_ais_update
+        self.link = link
+        self.image = image
+        self.launches = launches
+        self.name = name
+        self.active = active
+        self.id = id
+
+
+class Rockets(Base):
+    __tablename__ = "rockets"
+    height = Column(JSON)
+    diameter = Column(JSON)
+    mass = Column(JSON)
+    first_stage = Column(JSON)
+    second_stage = Column(JSON)
+    engines = Column(JSON)
+    landing_legs = Column(JSON)
+    payload_weights = Column(ARRAY(JSON))
+    flickr_images = Column(ARRAY(String))
+    name = Column(String)
+    type = Column(String)
+    active = Column(Boolean)
+    stages = Column(Integer)
+    boosters = Column(Integer)
+    cost_per_launch = Column(Integer)
+    success_rate_pct = Column(Integer)
+    first_flight = Column(TIMESTAMP)
+    country = Column(String)
+    company = Column(String)
+    wikipedia = Column(String)
+    description = Column(String)
+    id = Column(String, primary_key=True)
+
+    def __init__(
+        self,
+        height=None,
+        diameter=None,
+        mass=None,
+        first_stage=None,
+        second_stage=None,
+        engines=None,
+        landing_legs=None,
+        payload_weights=None,
+        flickr_images=None,
+        name=None,
+        type=None,
+        active=None,
+        stages=None,
+        boosters=None,
+        cost_per_launch=None,
+        success_rate_pct=None,
+        first_flight=None,
+        country=None,
+        company=None,
+        wikipedia=None,
+        description=None,
+        id=None
+    ):
+        self.height = height
+        self.diameter = diameter
+        self.mass = mass
+        self.first_stage = first_stage
+        self.second_stage = second_stage
+        self.engines = engines
+        self.landing_legs = landing_legs
+        self.payload_weights = payload_weights
+        self.flickr_images = flickr_images
+        self.name = name
+        self.type = type
+        self.active = active
+        self.stages = stages
+        self.boosters = boosters
+        self.cost_per_launch = cost_per_launch
+        self.success_rate_pct = success_rate_pct
+        self.first_flight = first_flight
+        self.country = country
+        self.company = company
+        self.wikipedia = wikipedia
+        self.description = description
         self.id = id

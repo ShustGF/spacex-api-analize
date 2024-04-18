@@ -12,6 +12,11 @@ from airflow.utils.dates import days_ago
 from sqlalchemy.orm import Session
 
 
+# Класс с константами
+class K:
+    HOST = "https://api.spacexdata.com/v4"
+
+
 def load_data_to_db(function_class, url, postgres_conn_id):
     pg_hook = PostgresHook(postgres_conn_id=postgres_conn_id)
     engine = pg_hook.get_sqlalchemy_engine()
@@ -23,7 +28,7 @@ def load_data_to_db(function_class, url, postgres_conn_id):
 
 
 logger = logging.getLogger(__name__)
-host = "https://api.spacexdata.com/v4"
+
 
 dag = DAG(
     dag_id="dags_db_spacex_api",
@@ -36,7 +41,7 @@ add_starlink_values_to_table = PythonOperator(
     python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_starlinks,
-        "url": f"{host}/starlink",
+        "url": f"{K.HOST}/starlink",
         "postgres_conn_id": "logical_rep",
     },
     dag=dag,
@@ -47,7 +52,7 @@ add_launches_values_to_table = PythonOperator(
     python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_launches,
-        "url": f"{host}/launches",
+        "url": f"{K.HOST}/launches",
         "postgres_conn_id": "logical_rep",
     },
     dag=dag,
@@ -58,7 +63,7 @@ add_capsules_values_to_table = PythonOperator(
     python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_capsules,
-        "url": f"{host}/capsules",
+        "url": f"{K.HOST}/capsules",
         "postgres_conn_id": "logical_rep",
     },
     dag=dag,
@@ -69,7 +74,7 @@ add_cores_values_to_table = PythonOperator(
     python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_cores,
-        "url": f"{host}/cores",
+        "url": f"{K.HOST}/cores",
         "postgres_conn_id": "logical_rep",
     },
     dag=dag,
@@ -80,7 +85,62 @@ add_crew_values_to_table = PythonOperator(
     python_callable=load_data_to_db,
     op_kwargs={
         "function_class": u.get_crew,
-        "url": f"{host}/crew",
+        "url": f"{K.HOST}/crew",
+        "postgres_conn_id": "logical_rep",
+    },
+    dag=dag,
+)
+
+add_landpads_values_to_table = PythonOperator(
+    task_id="add_landpads_values_to_table",
+    python_callable=load_data_to_db,
+    op_kwargs={
+        "function_class": u.get_landpads,
+        "url": f"{K.HOST}/landpads",
+        "postgres_conn_id": "logical_rep",
+    },
+    dag=dag,
+)
+
+add_launchpads_values_to_table = PythonOperator(
+    task_id="add_launchpads_values_to_table",
+    python_callable=load_data_to_db,
+    op_kwargs={
+        "function_class": u.get_launchpads,
+        "url": f"{K.HOST}/launchpads",
+        "postgres_conn_id": "logical_rep",
+    },
+    dag=dag,
+)
+
+add_payload_values_to_table = PythonOperator(
+    task_id="add_payload_values_to_table",
+    python_callable=load_data_to_db,
+    op_kwargs={
+        "function_class": u.get_payload,
+        "url": f"{K.HOST}/payloads",
+        "postgres_conn_id": "logical_rep",
+    },
+    dag=dag,
+)
+
+add_ships_values_to_table = PythonOperator(
+    task_id="add_ships_values_to_table",
+    python_callable=load_data_to_db,
+    op_kwargs={
+        "function_class": u.get_ships,
+        "url": f"{K.HOST}/ships",
+        "postgres_conn_id": "logical_rep",
+    },
+    dag=dag,
+)
+
+add_rockets_values_to_table = PythonOperator(
+    task_id="add_rockets_values_to_table",
+    python_callable=load_data_to_db,
+    op_kwargs={
+        "function_class": u.get_rockets,
+        "url": f"{K.HOST}/rockets",
         "postgres_conn_id": "logical_rep",
     },
     dag=dag,
@@ -102,4 +162,9 @@ check_db_connection = PostgresOperator(
     >> add_capsules_values_to_table
     >> add_cores_values_to_table
     >> add_crew_values_to_table
+    >> add_landpads_values_to_table
+    >> add_launchpads_values_to_table
+    >> add_payload_values_to_table
+    >> add_ships_values_to_table
+    >> add_rockets_values_to_table
 )

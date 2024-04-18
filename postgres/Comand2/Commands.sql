@@ -79,8 +79,120 @@ CREATE TABLE crew (
 	dt_insert timestamp DEFAULT date_trunc('hour'::text, now())::timestamp without time zone NULL
 );
 
-CREATE SUBSCRIPTION starlink_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION starlink_pub;
-CREATE SUBSCRIPTION launches_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION launches_pub;
-CREATE SUBSCRIPTION capsules_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION capsules_pub;
-CREATE SUBSCRIPTION cores_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION cores_pub;
-CREATE SUBSCRIPTION crew_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION crew_pub;
+CREATE TABLE landpads (
+	name text NULL,
+	full_name text NULL,
+	status text NULL,
+	type text NULL,
+	locality text NULL,
+	region text NULL,
+	latitude numeric NULL,
+	longitude numeric NULL,
+	landing_attempts integer NULL,
+	landing_successes integer NULL,
+	wikipedia text NULL,
+	details text NULL,
+	launches text[] NULL,
+	id text NULL
+);
+
+CREATE TABLE launchpads (
+	name text NULL,
+	full_name text NULL,
+	locality text NULL,
+	region text NULL,
+	timezone text NULL,
+	latitude numeric NULL,
+	longitude numeric NULL,
+	launch_attempts integer NULL,
+	launch_successes integer NULL,
+	rockets text[] NULL,
+	launches text[] NULL,
+	status text NULL,
+	id text NULL
+);
+
+CREATE TABLE payload (
+	dragon jsonb NULL,
+	name text NULL,
+	type text NULL,
+	reused bool NULL,
+	launch text NULL,
+	customers text[] NULL,
+	norad_ids integer[],
+	nationalities text[] NULL,
+	manufacturers text[] NULL,
+	mass_kg numeric NULL,
+	mass_lbs numeric NULL,
+	orbit text NULL,
+	reference_system text NULL,
+	regime text NULL,
+	longitude numeric NULL,
+	semi_major_axis_km numeric NULL,
+	eccentricity numeric NULL,
+	periapsis_km numeric NULL,
+	apoapsis_km numeric NULL,
+	inclination_deg numeric NULL,
+	period_min numeric NULL,
+	lifespan_years numeric NULL,
+	epoch timestamp NULL,
+	mean_motion numeric NULL,
+	raan numeric NULL,
+	arg_of_pericenter numeric NULL,
+	mean_anomaly numeric NULL,
+	id text NULL
+);
+
+CREATE TABLE ships (
+	legacy_id text NULL,
+	model text NULL,
+	type text NULL,
+	roles text[] NULL,
+	imo integer NULL,
+	mmsi integer NULL,
+	abs integer NULL,
+	class_ship integer NULL,
+	mass_kg integer NULL,
+	mass_lbs integer NULL,
+	year_built integer NULL,
+	home_port text NULL,
+	status text NULL,
+	speed_kn numeric NULL,
+	course_deg numeric NULL,
+	latitude numeric NULL,
+	longitude numeric NULL,
+	last_ais_update text NULL,
+	link text NULL,
+	image text NULL,
+	launches text[] NULL,
+	name text NULL,
+	active bool NULL,
+	id text NULL
+);
+
+CREATE TABLE rockets (
+	height jsonb NULL,
+	diameter jsonb NULL,
+	mass jsonb NULL,
+	first_stage jsonb NULL,
+	second_stage jsonb NULL,
+	engines jsonb NULL,
+	landing_legs jsonb NULL,
+	payload_weights jsonb[] NULL,
+	flickr_images text[] NULL,
+	name text NULL,
+	type text NULL,
+	active bool NULL,
+	stages integer NULL,
+	boosters integer NULL,
+	cost_per_launch integer NULL,
+	success_rate_pct integer NULL,
+	first_flight timestamp NULL,
+	country text NULL,
+	company text NULL,
+	wikipedia text NULL,
+	description text NULL,
+	id text NULL
+);
+
+CREATE SUBSCRIPTION db_test_sub CONNECTION 'host=server_public port=5432 user=postgres password=gfh0km dbname=replica_logical' PUBLICATION db_test_pub;
