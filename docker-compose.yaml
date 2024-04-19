@@ -3,6 +3,8 @@ x-airflow-common:
   &airflow-common
   #image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.8.2}
   build: .
+  env_file:
+      - ./.env
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -14,13 +16,9 @@ x-airflow-common:
     AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__CORE__TEST_CONNECTION: 'Enabled'
-    # POSTGRES_SENDER_USER: postgres
-    # POSTGRES_SENDER_PASSWORD=: gfh0km
-    # POSTGRES_SENDER_HOST: host.docker.internal
-    # POSTGRES_SENDER_PORT: 5431
-    # POSTGRES_SENDER_DB: replica_logical
-
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+
+    
 
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
   volumes:
@@ -35,7 +33,7 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
-    server_public:
+    server_publicist:
       condition: service_healthy
     
 
@@ -236,9 +234,9 @@ services:
 
 
 ##### поднятие транзакционного PSQL(создана логическая репликация через публикацию) #####
-  server_public:
+  server_publicist:
     image: postgres:14
-    container_name: server_public
+    container_name: server_publicist
     restart: always
     ports:
       - '5431:5432'
@@ -249,17 +247,17 @@ services:
       - "-c"
       - "work_mem=512MB"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: gfh0km
-      POSTGRES_DB: replica_logical
+      POSTGRES_USER: ${POSTGRES_SENDER_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_SENDER_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_SENDER_DB}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d replica_logical"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_SENDER_USER} -d ${POSTGRES_SENDER_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-    volumes:
-      - '/mnt/d/GitHub/spacex-api-analize/postgres/Comand1:/docker-entrypoint-initdb.d/'
+    # volumes:
+    #   - '/mnt/d/GitHub/spacex-api-analize/postgres/Comand1:/docker-entrypoint-initdb.d/'
     networks:
       replication_network:
         ipv4_address: 192.168.1.2
@@ -272,14 +270,20 @@ services:
     container_name: server_subscription
     ports:
       - '5433:5432'
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "work_mem=512MB"
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: gfh0km
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_RESIVER_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_RESIVER_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_RESIVER_DB}
       
-    volumes:
-      - '/mnt/d/GitHub/spacex-api-analize/postgres/Comand2:/docker-entrypoint-initdb.d/'
+    # volumes:
+    #   - '/mnt/d/GitHub/spacex-api-analize/postgres/Comand2:/docker-entrypoint-initdb.d/'
     networks:
       replication_network:
         ipv4_address: 192.168.1.3
@@ -287,7 +291,7 @@ services:
       click_net:
         ipv4_address: 192.168.2.3
     depends_on:
-      server_public:
+      server_publicist:
         condition: service_healthy
 
 # Создание сервера ClickHouse

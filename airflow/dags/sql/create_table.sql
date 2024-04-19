@@ -195,5 +195,3 @@ CREATE TABLE rockets (
 	description text NULL,
 	id text NULL
 );
-
-CREATE PUBLICATION db_test_pub FOR ALL TABLES;
