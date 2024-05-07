@@ -1,7 +1,6 @@
 version: '3.5'
 x-airflow-common:
   &airflow-common
-  #image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.8.2}
   build: .
   env_file:
       - ./.env
@@ -255,8 +254,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-    # volumes:
-    #   - '/mnt/d/GitHub/spacex-api-analize/postgres/Comand1:/docker-entrypoint-initdb.d/'
     networks:
       replication_network:
         ipv4_address: 192.168.1.2
@@ -281,8 +278,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_RESIVER_PASSWORD}
       POSTGRES_DB: ${POSTGRES_RESIVER_DB}
       
-    # volumes:
-    #   - '/mnt/d/GitHub/spacex-api-analize/postgres/Comand2:/docker-entrypoint-initdb.d/'
     networks:
       replication_network:
         ipv4_address: 192.168.1.3
@@ -337,12 +332,9 @@ services:
 
 ### Создание BI системы Metabase
   metabase:
-    # image: my-metabase-with-clickhouse
     build: ./metabase/
     container_name: metabase
     hostname: metabase
-    volumes:
-    - ./metabase/urandom:/dev/random:ro
     ports:
       - 3000:3000
     environment:
@@ -378,7 +370,6 @@ services:
 #####  Allocated disk space  #####
 volumes:
   postgres-db-volume:  # выделено по умолчанию для AirFlow
-  PGDATA:  # Выделен для postgres_data
   pgadmin-data:
 
 
