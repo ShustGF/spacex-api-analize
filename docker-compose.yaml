@@ -25,6 +25,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/airflow/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/airflow/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/airflow/plugins:/opt/airflow/plugins
+    - ./dbt:/mnt/dbt
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -244,10 +245,12 @@ services:
       - "wal_level=logical"
       - "-c"
       - "work_mem=512MB"
+    volumes:
+      - '/mnt/d/GitHub/spacex-api-analize/postgres/server_publicist:/docker-entrypoint-initdb.d/'
     environment:
-      POSTGRES_USER: ${POSTGRES_SENDER_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_SENDER_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_SENDER_DB}
+      POSTGRES_USER: ${POSTGRES_PUBLICIST_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PUBLICIST_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_PUBLICIST_DB}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_SENDER_USER} -d ${POSTGRES_SENDER_DB}"]
       interval: 10s
@@ -273,10 +276,12 @@ services:
       - "-c"
       - "work_mem=512MB"
     restart: unless-stopped
+    volumes:
+      - '/mnt/d/GitHub/spacex-api-analize/postgres/server_subscription:/docker-entrypoint-initdb.d/'
     environment:
-      POSTGRES_USER: ${POSTGRES_RESIVER_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_RESIVER_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_RESIVER_DB}
+      POSTGRES_USER: ${POSTGRES_SUBSCRIPTION_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_SUBSCRIPTION_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_SUBSCRIPTION_DB}
       
     networks:
       replication_network:
@@ -296,10 +301,10 @@ services:
       - 8123:8123
     restart: unless-stopped
     environment:
-      CLICKHOUSE_USER: username
-      CLICKHOUSE_PASSWORD: gfh0km
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
-      CLICKHOUSE_DB: my_database
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
     volumes:
       - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/lib/clickhouse/'
       - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/log/clickhouse-server/'
