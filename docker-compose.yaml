@@ -252,7 +252,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PUBLICIST_PASSWORD}
       POSTGRES_DB: ${POSTGRES_PUBLICIST_DB}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_SENDER_USER} -d ${POSTGRES_SENDER_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_PUBLICIST_USER} -d ${POSTGRES_PUBLICIST_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -282,7 +282,12 @@ services:
       POSTGRES_USER: ${POSTGRES_SUBSCRIPTION_USER}
       POSTGRES_PASSWORD: ${POSTGRES_SUBSCRIPTION_PASSWORD}
       POSTGRES_DB: ${POSTGRES_SUBSCRIPTION_DB}
-      
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_SUBSCRIPTION_USER} -d ${POSTGRES_SUBSCRIPTION_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       replication_network:
         ipv4_address: 192.168.1.3
@@ -306,13 +311,16 @@ services:
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
       CLICKHOUSE_DB: ${CLICKHOUSE_DB}
     volumes:
-      - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/lib/clickhouse/'
-      - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/log/clickhouse-server/'
+      # - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/lib/clickhouse/'
+      # - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/log/clickhouse-server/'
       - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_command:/docker-entrypoint-initdb.d/'
     networks:
       click_net:
         ipv4_address: 192.168.2.2
       metanet1:
+    depends_on:
+      server_subscription:
+        condition: service_healthy
 
 #### Create PGAdmin ####
   pgadmin:

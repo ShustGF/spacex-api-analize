@@ -205,3 +205,17 @@ CREATE TABLE rockets (
 	id text NULL,
 	datetime_in timestamp DEFAULT NOW()
 );
+
+CREATE SUBSCRIPTION db_test_sub
+    CONNECTION 'host=server_publicist
+                port=5432
+                user=postgres
+				password=gfh0km
+				dbname=postgres_publicist'
+	PUBLICATION db_pub
+	with (
+		create_slot = false,
+		enabled = false,
+		slot_name = my_pub_slot
+		);
+ALTER SUBSCRIPTION db_test_sub ENABLE;

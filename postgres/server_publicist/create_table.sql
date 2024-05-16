@@ -195,3 +195,7 @@ CREATE TABLE rockets (
 	description text NULL,
 	id text NULL
 );
+
+CREATE PUBLICATION db_pub FOR ALL TABLES;
+
+SELECT pg_create_logical_replication_slot('my_pub_slot', 'pgoutput');
