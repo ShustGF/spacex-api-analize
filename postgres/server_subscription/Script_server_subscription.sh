@@ -1,42 +1,14 @@
-CREATE TABLE starlink_satellites (
+#!/bin/bash
+
+psql -d postgres_subscriber -c "CREATE TABLE starlink_satellites (
 	spacetrack jsonb NULL,
-	"version" text NULL,
+	version text NULL,
 	launch text NULL,
 	longitude numeric NULL,
 	latitude numeric NULL,
 	height_km numeric NULL,
 	velocity_kms numeric NULL,
 	id text NOT NULL,
-	datetime_in timestamp DEFAULT NOW()
-);
-
-CREATE TABLE launches (
-	fairings jsonb NULL,
-	links jsonb NULL,
-	static_fire_date_utc timestamp NULL,
-	static_fire_date_unix numeric NULL,
-	tbd bool NULL,
-	net bool NULL,
-	"window" numeric NULL,
-	rocket text NULL,
-	success bool NULL,
-	failures _jsonb NULL,
-	details text NULL,
-	crew _text NULL,
-	ships _text NULL,
-	capsules _text NULL,
-	payloads _text NULL,
-	launchpad text NULL,
-	auto_update bool NULL,
-	flight_number numeric NULL,
-	"name" text NULL,
-	date_utc timestamp NULL,
-	date_unix numeric NULL,
-	date_local text NULL,
-	date_precision text NULL,
-	upcoming bool NULL,
-	cores _jsonb NULL,
-	id text NULL,
 	datetime_in timestamp DEFAULT NOW()
 );
 
@@ -48,13 +20,13 @@ CREATE TABLE capsules (
 	launches text[] NULL,
 	serial text NULL,
 	status text NULL,
-	"type" text NULL,
+	type text NULL,
 	id text NULL,
 	datetime_in timestamp DEFAULT NOW()
 );
 
 CREATE TABLE cores (
-	"block" numeric NULL,
+	block numeric NULL,
 	reuse_count numeric NULL,
 	rtls_attempts numeric NULL,
 	rtls_landings numeric NULL,
@@ -204,18 +176,52 @@ CREATE TABLE rockets (
 	description text NULL,
 	id text NULL,
 	datetime_in timestamp DEFAULT NOW()
-);
+);"
 
-CREATE SUBSCRIPTION db_test_sub
+psql -d postgres_subscriber -c 'CREATE TABLE launches (
+	fairings jsonb NULL,
+	links jsonb NULL,
+	static_fire_date_utc timestamp NULL,
+	static_fire_date_unix numeric NULL,
+	tbd bool NULL,
+	net bool NULL,
+	"window" numeric NULL,
+	rocket text NULL,
+	success bool NULL,
+	failures _jsonb NULL,
+	details text NULL,
+	crew _text NULL,
+	ships _text NULL,
+	capsules _text NULL,
+	payloads _text NULL,
+	launchpad text NULL,
+	auto_update bool NULL,
+	flight_number numeric NULL,
+	"name" text NULL,
+	date_utc timestamp NULL,
+	date_unix numeric NULL,
+	date_local text NULL,
+	date_precision text NULL,
+	upcoming bool NULL,
+	cores _jsonb NULL,
+	id text NULL,
+	datetime_in timestamp DEFAULT NOW()
+);'
+
+psql -d postgres_subscriber -c "
+	CREATE SUBSCRIPTION db_test_sub
     CONNECTION 'host=server_publicist
                 port=5432
-                user=postgres
-				password=gfh0km
+                user=$POSTGRES_USER
+				password=$POSTGRES_PASSWORD
 				dbname=postgres_publicist'
 	PUBLICATION db_pub
 	with (
 		create_slot = false,
 		enabled = false,
 		slot_name = my_pub_slot
-		);
-ALTER SUBSCRIPTION db_test_sub ENABLE;
+		);"
+
+psql -d postgres_subscriber -c "ALTER SUBSCRIPTION db_test_sub ENABLE;"
+
+

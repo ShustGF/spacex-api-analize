@@ -1,41 +1,14 @@
-CREATE TABLE starlink_satellites (
+#!/bin/bash
+
+psql -d postgres_publicist -c "CREATE TABLE starlink_satellites (
 	spacetrack jsonb NULL,
-	"version" text NULL,
+	version text NULL,
 	launch text NULL,
 	longitude numeric NULL,
 	latitude numeric NULL,
 	height_km numeric NULL,
 	velocity_kms numeric NULL,
 	id text NOT NULL
-);
-
-CREATE TABLE launches (
-	fairings jsonb NULL,
-	links jsonb NULL,
-	static_fire_date_utc timestamp NULL,
-	static_fire_date_unix numeric NULL,
-	tbd bool NULL,
-	net bool NULL,
-	"window" numeric NULL,
-	rocket text NULL,
-	success bool NULL,
-	failures _jsonb NULL,
-	details text NULL,
-	crew _text NULL,
-	ships _text NULL,
-	capsules _text NULL,
-	payloads _text NULL,
-	launchpad text NULL,
-	auto_update bool NULL,
-	flight_number numeric NULL,
-	"name" text NULL,
-	date_utc timestamp NULL,
-	date_unix numeric NULL,
-	date_local text NULL,
-	date_precision text NULL,
-	upcoming bool NULL,
-	cores _jsonb NULL,
-	id text NULL
 );
 
 CREATE TABLE capsules (
@@ -46,12 +19,12 @@ CREATE TABLE capsules (
 	launches text[] NULL,
 	serial text NULL,
 	status text NULL,
-	"type" text NULL,
+	type text NULL,
 	id text NULL
 );
 
 CREATE TABLE cores (
-	"block" numeric NULL,
+	block numeric NULL,
 	reuse_count numeric NULL,
 	rtls_attempts numeric NULL,
 	rtls_landings numeric NULL,
@@ -194,8 +167,37 @@ CREATE TABLE rockets (
 	wikipedia text NULL,
 	description text NULL,
 	id text NULL
-);
+);"
 
-CREATE PUBLICATION db_pub FOR ALL TABLES;
+psql -d postgres_publicist -c 'CREATE TABLE launches (
+	fairings jsonb NULL,
+	links jsonb NULL,
+	static_fire_date_utc timestamp NULL,
+	static_fire_date_unix numeric NULL,
+	tbd bool NULL,
+	net bool NULL,
+	"window" numeric NULL,
+	rocket text NULL,
+	success bool NULL,
+	failures _jsonb NULL,
+	details text NULL,
+	crew _text NULL,
+	ships _text NULL,
+	capsules _text NULL,
+	payloads _text NULL,
+	launchpad text NULL,
+	auto_update bool NULL,
+	flight_number numeric NULL,
+	name text NULL,
+	date_utc timestamp NULL,
+	date_unix numeric NULL,
+	date_local text NULL,
+	date_precision text NULL,
+	upcoming bool NULL,
+	cores _jsonb NULL,
+	id text NULL
+);'
 
-SELECT pg_create_logical_replication_slot('my_pub_slot', 'pgoutput');
+psql -d postgres_publicist -c "CREATE PUBLICATION db_pub FOR ALL TABLES;"
+
+psql -d postgres_publicist -c "SELECT pg_create_logical_replication_slot('my_pub_slot', 'pgoutput');"

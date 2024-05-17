@@ -310,6 +310,7 @@ services:
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
       CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+      POSTGRES_SUBSCRIPTION_PASSWORD: ${POSTGRES_SUBSCRIPTION_PASSWORD}
     volumes:
       # - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/lib/clickhouse/'
       # - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/log/clickhouse-server/'
