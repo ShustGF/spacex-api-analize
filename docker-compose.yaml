@@ -318,7 +318,8 @@ services:
     networks:
       click_net:
         ipv4_address: 192.168.2.2
-      metanet1:
+      metanet2:
+        ipv4_address: 192.168.3.2
     depends_on:
       server_subscription:
         condition: service_healthy
@@ -359,8 +360,8 @@ services:
       MB_DB_PASS: mysecretpassword
       MB_DB_HOST: postgres
     networks:
-      click_net:
-          ipv4_address: 192.168.2.4
+      metanet2:
+          ipv4_address: 192.168.3.4
       metanet1:
     healthcheck:
       test: curl --fail -I http://localhost:3000/api/health || exit 1
@@ -376,6 +377,8 @@ services:
       POSTGRES_USER: metabase
       POSTGRES_DB: metabaseappdb
       POSTGRES_PASSWORD: mysecretpassword
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data/pgdata
     networks:
       metanet1:
 
@@ -385,6 +388,7 @@ services:
 volumes:
   postgres-db-volume:  # выделено по умолчанию для AirFlow
   pgadmin-data:
+  pgdata:
 
 
 #####  Settings Networks  #####
@@ -406,6 +410,12 @@ networks:
       driver: default
       config:
         - subnet: 192.168.2.0/24
+  metanet2:
+    name: metanet
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.3.0/24   
   metanet1:
     driver: bridge
-
