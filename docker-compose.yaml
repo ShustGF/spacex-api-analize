@@ -318,7 +318,7 @@ services:
     networks:
       click_net:
         ipv4_address: 192.168.2.2
-      metanet2:
+      metanet:
         ipv4_address: 192.168.3.2
     depends_on:
       server_subscription:
@@ -360,7 +360,7 @@ services:
       MB_DB_PASS: mysecretpassword
       MB_DB_HOST: postgres
     networks:
-      metanet2:
+      metanet:
           ipv4_address: 192.168.3.4
       metanet1:
     healthcheck:
@@ -410,7 +410,7 @@ networks:
       driver: default
       config:
         - subnet: 192.168.2.0/24
-  metanet2:
+  metanet:
     name: metanet
     driver: bridge
     ipam:
