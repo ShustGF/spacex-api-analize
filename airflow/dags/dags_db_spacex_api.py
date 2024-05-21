@@ -2,8 +2,8 @@
 
 import json
 import logging
-import utils as u
 
+import utils as u
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
