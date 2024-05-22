@@ -363,6 +363,8 @@ services:
       metanet:
           ipv4_address: 192.168.3.4
       metanet1:
+    volumes:
+      - metabasevol:/var/lib/docker/volumes/metabasevol/_data
     healthcheck:
       test: curl --fail -I http://localhost:3000/api/health || exit 1
       interval: 15s
@@ -389,7 +391,7 @@ volumes:
   postgres-db-volume:  # выделено по умолчанию для AirFlow
   pgadmin-data:
   pgdata:
-
+  metabasevol:
 
 #####  Settings Networks  #####
 networks:
