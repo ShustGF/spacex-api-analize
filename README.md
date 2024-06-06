@@ -18,9 +18,9 @@
 * MetaBase v0.49.8
 * Docker v4.22.1
 
-## Принципиальная схема
+## Схема процесса
 
-![Принципиальная схема хранилища данных](/pictures/Prin_chema.png)
+![Схема процесса](/pictures/Prin_chema.png)
 
 Принципиальность данной схемы заключается в следующем:
 
@@ -61,7 +61,7 @@
 1. выгрузить проек с помощью команды 
     ```
     git clone git@github.com:ShustGF/spacex-api-analize.git```
-2. в каталог проекта создать файл .env, в котором необходимо указать следующие атрибуты:
+2. в каталог проекта переименовать файл .env_template в .env, в котором необходимо указать следующие атрибуты:
 ```
 AIRFLOW_UID= 50000
 POSTGRES_PUBLICIST_USER=postgres
@@ -76,7 +76,7 @@ CLICKHOUSE_USER=username
 CLICKHOUSE_PASSWORD=gfh0km
 CLICKHOUSE_DB=my_database
 ```
-(вы можете указать свои значения)
+(выше указан пример заполения, вы можете вставить свои данные)
 
 3.Для правильной работы DBT необходимо создать в корне проекта каталог .dbt, внутри которого необходимо создать файл profiles.yml, со следующим содержимым:
 ```
@@ -85,11 +85,11 @@ CH_marts:
   outputs:
     dev:
       type: clickhouse
-      schema: my_database
+      schema: "{{ env_var('CLICKHOUSE_DB') }}"
       host: host.docker.internal
       port: 8123
-      user: username
-      password: gfh0km
+      user: "{{ env_var('CLICKHOUSE_USER') }}"
+      password: "{{ env_var('CLICKHOUSE_PASSWORD') }}"
       secure: False
 ```
 (если вы изменяли данные, то необходимо вставить именно их)
