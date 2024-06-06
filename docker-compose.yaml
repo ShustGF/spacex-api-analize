@@ -16,8 +16,8 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__CORE__TEST_CONNECTION: 'Enabled'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
-
-    
+    # AIRFLOW_CONN_SERVER_PUBLICIST: 'postgresql://postgres:gfh0km@host.docker.internal:5431/postgres_publicist'
+    AIRFLOW_CONN_SERVER_PUBLICIST: 'postgresql://${POSTGRES_PUBLICIST_USER}:${POSTGRES_PUBLICIST_PASSWORD}@host.docker.internal:5431/${POSTGRES_PUBLICIST_DB}'
 
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
   volumes:
