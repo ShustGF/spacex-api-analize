@@ -1,4 +1,4 @@
-CH_marts:
+ch_marts:
   target: dev
   outputs:
     dev:
