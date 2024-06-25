@@ -59,56 +59,57 @@
 
 1. Выгрузить проект с помощью команды
     ```
-    git clone git@github.com:ShustGF/spacex-api-analize.git```
-2. В каталоге проекта переименовать файл .env_template в .env, в котором необходимо указать следующие атрибуты (не меняйте имена переменных, так как на них есть ссылки в проекте):
-```
-AIRFLOW_UID=50000
-POSTGRES_PUBLICIST_USER=postgres
-POSTGRES_PUBLICIST_PASSWORD=gfh0km
-POSTGRES_PUBLICIST_DB=postgres_publicist
-
-POSTGRES_SUBSCRIPTION_USER=postgres
-POSTGRES_SUBSCRIPTION_PASSWORD=gfh0km
-POSTGRES_SUBSCRIPTION_DB=postgres_subscriber
-
-CLICKHOUSE_USER=username
-CLICKHOUSE_PASSWORD=gfh0km
-CLICKHOUSE_DB=my_database
-```
-(выше указан пример заполения, вы можете вставить свои данные)
+    git clone git@github.com:ShustGF/spacex-api-analize.git
+    ```
+3. В каталоге проекта переименовать файл .env_template в .env, в котором необходимо указать следующие атрибуты (не меняйте имена переменных, так как на них есть ссылки в проекте):
+    ```
+    AIRFLOW_UID=50000
+    POSTGRES_PUBLICIST_USER=postgres
+    POSTGRES_PUBLICIST_PASSWORD=gfh0km
+    POSTGRES_PUBLICIST_DB=postgres_publicist
+    
+    POSTGRES_SUBSCRIPTION_USER=postgres
+    POSTGRES_SUBSCRIPTION_PASSWORD=gfh0km
+    POSTGRES_SUBSCRIPTION_DB=postgres_subscriber
+    
+    CLICKHOUSE_USER=username
+    CLICKHOUSE_PASSWORD=gfh0km
+    CLICKHOUSE_DB=my_database
+    ```
+    (выше указан пример заполения, вы можете вставить свои данные)
 
 3. Для правильной работы DBT необходимо создать в корне проекта каталог .dbt из каталога .dbt_template, внутри которого необходимо создать файл profiles.yml со следующим содержимым:
-```
-ch_marts:
-  target: dev
-  outputs:
-    dev:
-      type: clickhouse
-      schema: "{{ env_var('CLICKHOUSE_DB') }}"
-      host: host.docker.internal
-      port: 8123
-      user: "{{ env_var('CLICKHOUSE_USER') }}"
-      password: "{{ env_var('CLICKHOUSE_PASSWORD') }}"
-      secure: False
-```
+    ```
+    ch_marts:
+      target: dev
+      outputs:
+        dev:
+          type: clickhouse
+          schema: "{{ env_var('CLICKHOUSE_DB') }}"
+          host: host.docker.internal
+          port: 8123
+          user: "{{ env_var('CLICKHOUSE_USER') }}"
+          password: "{{ env_var('CLICKHOUSE_PASSWORD') }}"
+          secure: False
+    ```
 
 4. Запустить Docker и командную оболочку (так как я работаю на ОС Windows, командная оболочка у меня WSL)
 5. Перейти в корень проекта, где находится файл docker-compose.yaml
 6. Выполнить следующую команду:
-```
-    docker compose up -d
-```
-7. После скачивания всех образов и поднятия всех контейнеров открыть браузер и прописывать в поисковой строке:
-```
-    localhost:8080
-```
+    ```
+        docker compose up -d
+    ```
+7. После скачивания всех образов и поднятия всех контейнеров открыть браузер и прописать в поисковой строке:
+    ```
+        localhost:8080
+    ```
 8. Зайти в airflow (по умолчанию логин и пароль - airflow)
 
 9. Запустить DAG
 10. Перейти на новую вкладку и прописать:
-```
-    localhost:3000
-```
+    ```
+        localhost:3000
+    ```
 11. Зарегистрироваться и создать свой дашборд на основе данных из таблиц и представлений. В моем случае дашборд выглядит следующим образом:
 
-![LDashbord](/pictures/dashbord.png)
+    ![LDashbord](/pictures/dashbord.png)
