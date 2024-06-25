@@ -6,3 +6,4 @@ sources:
     - name: starlink_satellites
     - name: launches
     - name: rockets
+    - name: launchpads
