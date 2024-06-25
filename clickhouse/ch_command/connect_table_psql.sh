@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-clickhouse-client -q "CREATE TABLE my_database.launches (
+clickhouse-client -q "CREATE TABLE ${CLICKHOUSE_DB}.launches (
 	fairings String NULL,
 	links String NULL,
 	static_fire_date_utc DateTime NULL,
@@ -33,5 +33,5 @@ ENGINE = PostgreSQL('server_subscription:5432', 'postgres_subscriber', 'launches
 
 for table in starlink_satellites capsules cores crew landpads launchpads payload ships rockets
 do
-clickhouse-client -q "CREATE TABLE my_database.$table ENGINE = PostgreSQL('server_subscription:5432', 'postgres_subscriber', '$table', 'postgres', '$POSTGRES_SUBSCRIPTION_PASSWORD');"
+clickhouse-client -q "CREATE TABLE ${CLICKHOUSE_DB}.$table ENGINE = PostgreSQL('server_subscription:5432', 'postgres_subscriber', '$table', 'postgres', '$POSTGRES_SUBSCRIPTION_PASSWORD');"
 done

@@ -74,7 +74,7 @@ POSTGRES_SUBSCRIPTION_DB=postgres_subscriber
 
 CLICKHOUSE_USER=username
 CLICKHOUSE_PASSWORD=gfh0km
-CLICKHOUSE_DB=my_database
+CLICKHOUSE_DB=db_spacex
 ```
 (выше указан пример заполения, вы можете вставить свои данные)
 
