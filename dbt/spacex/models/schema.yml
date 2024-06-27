@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: my_database
+  - name: db_spacex
     tables:
     - name: starlink_satellites
     - name: launches

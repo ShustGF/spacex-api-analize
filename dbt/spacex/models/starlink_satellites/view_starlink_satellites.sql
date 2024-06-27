@@ -1,5 +1,3 @@
-{ { config(materialized = 'view') } }
-
 SELECT JSONExtractString(spacetrack, 'OBJECT_NAME') AS object_name,
 	toDate(
 		JSONExtractString(spacetrack, 'LAUNCH_DATE')
@@ -17,4 +15,4 @@ SELECT JSONExtractString(spacetrack, 'OBJECT_NAME') AS object_name,
 	velocity_kms,
 	id,
 	datetime_in
-FROM { { source('my_database', 'starlink_satellites') } }
+FROM {{ source("db_spacex", "starlink_satellites") }}
