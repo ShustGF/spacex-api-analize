@@ -5,7 +5,7 @@ SELECT JSONExtractString(
 			''
 		),
 		'reason'
-	) as,
+	) as reason,
 	date_utc,
 	FROM db_spacex.launches
 WHERE NOT success

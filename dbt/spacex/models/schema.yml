@@ -7,3 +7,9 @@ sources:
     - name: launches
     - name: rockets
     - name: launchpads
+    - name: capsules
+    - name: cores
+    - name: ships
+    - name: payload
+    - name: landpads
+    - name: crew
