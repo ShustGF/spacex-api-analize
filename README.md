@@ -1,5 +1,7 @@
 # Обработка данных SpaceX API 
 
+![Схема процесса](./pictures/spacexlogo.jpg)
+
 ## Задание проекта
 
 Создание витрин данных на основе открытых данных компании SpaceX (https://github.com/r-spacex/SpaceX-API/tree/master/docs#rspacex-api-docs)
