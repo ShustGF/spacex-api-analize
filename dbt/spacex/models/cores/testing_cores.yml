@@ -1,0 +1,17 @@
+# Singularity тест
+models:
+  - name: view_count_cores_by_status
+    columns:
+      - name: status
+        tests: 
+          - not_null
+          - unique
+          - accepted_values:
+              values: ['inactive', 'lost', 'expended', 'active']
+  - name: view_all_head_columns
+    columns:
+      - name: country
+        tests:
+          - relationships:
+              to: source("db_spacex", "rockets")
+              field: country
