@@ -1,5 +1,5 @@
 SELECT 
-	JSONExtractString(height, 'meters') as height_metr, 
+	{{ values_from_json('height', "meters") }} as height_metr, -- вариант напсиания макроса на DBT
 	JSONExtractString(diameter, 'meters') as diameter_metr, 
 	JSONExtractString(mass, 'kg') as mass_kg, 
 	JSONExtractInt(first_stage, 'engines') + JSONExtractInt(second_stage, 'engines') as count_engines_all,  

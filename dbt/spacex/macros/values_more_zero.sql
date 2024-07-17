@@ -1,4 +1,4 @@
-{% test values_more_zero(model, column_name, value_more) %}
+{% test values_more_zero(model, column_name, value_more=0) %}
 
     SELECT
         *
