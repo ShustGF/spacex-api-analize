@@ -8,6 +8,10 @@ models:
           - unique
           - accepted_values:
               values: ['inactive', 'lost', 'expended', 'active']
+      - name: count_cores_by_status
+        tests:
+          - values_more_zero: # Generic test
+              value_more: 0
   - name: view_all_head_columns
     columns:
       - name: country
