@@ -11,9 +11,7 @@ dag = DAG(
 )
 
 create_data_marts = BashOperator(
-    task_id="test_data_marts",
-    bash_command="cd /mnt/dbt/spacex/ && dbt test",
-    dag=dag
+    task_id="test_data_marts", bash_command="cd /mnt/dbt/spacex/ && dbt test", dag=dag
 )
 
 
