@@ -1,4 +1,4 @@
-SELECT JSONExtractString(spacetrack, 'OBJECT_NAME') AS OBJECT_NAME
+SELECT {{ values_from_json('spacetrack', "OBJECT_NAME") }} AS OBJECT_NAME
 FROM {{ source("db_spacex", "starlink_satellites") }}
 WHERE longitude IS NULL OR 
 	  latitude IS NULL OR

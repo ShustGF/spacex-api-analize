@@ -1,8 +1,8 @@
 SELECT 
-	if(empty(JSONExtractString(spacetrack, 'COUNTRY_CODE')), 
+	if(empty({{ values_from_json('spacetrack', "COUNTRY_CODE") }}), 
 	   'US',
-	   JSONExtractString(spacetrack, 'COUNTRY_CODE')) AS COUNTRY_CODE, 
-	JSONExtractString(spacetrack, 'CENTER_NAME') AS CENTER_NAME,
+	   {{ values_from_json('spacetrack', "COUNTRY_CODE") }}) AS COUNTRY_CODE, 
+	{{ values_from_json('spacetrack', "CENTER_NAME") }} AS CENTER_NAME,
 	COUNT(id) AS count_satellite
 FROM {{ source("db_spacex", "starlink_satellites") }}
 GROUP BY 

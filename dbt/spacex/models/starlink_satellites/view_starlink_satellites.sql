@@ -1,11 +1,11 @@
-SELECT JSONExtractString(spacetrack, 'OBJECT_NAME') AS object_name,
+SELECT {{ values_from_json('spacetrack', "OBJECT_NAME") }} AS object_name,
 	toDate(
-		JSONExtractString(spacetrack, 'LAUNCH_DATE')
+		{{ values_from_json('spacetrack', "LAUNCH_DATE") }} 
 	) AS launch_date,
 	toDate(
-		JSONExtractString(spacetrack, 'DECAY_DATE')
+		{{ values_from_json('spacetrack', "DECAY_DATE") }}
 	) AS decay_date,
-	JSONExtractString(spacetrack, 'ORIGINATOR') AS originator,
+	{{ values_from_json('spacetrack', "ORIGINATOR") }} AS originator,
 	spacetrack,
 	version,
 	launch,
