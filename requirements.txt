@@ -1,0 +1,4 @@
+dbt-core==1.7.0
+dbt-clickhouse==1.7.6
+python-decouple==3.8
+requests==2.31.0

@@ -1,7 +1,9 @@
 version: '3.5'
 x-airflow-common:
   &airflow-common
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.8.2}
+  build: .
+  env_file:
+      - ./.env
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -10,10 +12,11 @@ x-airflow-common:
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
-
+    AIRFLOW__CORE__TEST_CONNECTION: 'Enabled'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+    AIRFLOW_CONN_SERVER_PUBLICIST: 'postgresql://${POSTGRES_PUBLICIST_USER}:${POSTGRES_PUBLICIST_PASSWORD}@host.docker.internal:5431/${POSTGRES_PUBLICIST_DB}'
 
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
   volumes:
@@ -21,6 +24,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/airflow/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/airflow/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/airflow/plugins:/opt/airflow/plugins
+    - ./dbt:/mnt/dbt
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -28,7 +32,7 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
-    postgres_data:
+    server_publicist:
       condition: service_healthy
     
 
@@ -96,7 +100,6 @@ services:
     <<: *airflow-common
     command: celery worker
     healthcheck:
-
       test:
         - "CMD-SHELL"
         - 'celery --app airflow.providers.celery.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}" || celery --app airflow.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}"'
@@ -106,13 +109,14 @@ services:
       start_period: 30s
     environment:
       <<: *airflow-common-env
-
       DUMB_INIT_SETSID: "0"
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   airflow-triggerer:
     <<: *airflow-common
@@ -226,40 +230,98 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-        
-######    Create PostgreSQL for transactions    ######
-  postgres_data:
-    build: ./postgres/
-    container_name: postgres_container
+
+##### поднятие транзакционного PSQL(создана логическая репликация через публикацию) #####
+  server_publicist:
+    image: postgres:14
+    container_name: server_publicist
+    restart: always
+    ports:
+      - '5431:5432'
     command:
       - "postgres"
       - "-c"
-      - "shared_buffers=1GB"
+      - "wal_level=logical"
       - "-c"
       - "work_mem=512MB"
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: gfh0km
-      POSTGRES_DB: postgres
     volumes:
-      - PGDATA:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+      - '/mnt/d/GitHub/spacex-api-analize/postgres/server_publicist:/docker-entrypoint-initdb.d/'
+    environment:
+      POSTGRES_USER: ${POSTGRES_PUBLICIST_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PUBLICIST_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_PUBLICIST_DB}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_PUBLICIST_USER} -d ${POSTGRES_PUBLICIST_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-    restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 4G
     networks:
-      - postgres
+      replication_network:
+        ipv4_address: 192.168.1.2
+      data_postgres:
 
+
+####   Сервер подписчика с данного сервера будем брать данные и класть в CH####
+  server_subscription:
+    image: postgres:14
+    container_name: server_subscription
+    ports:
+      - '5433:5432'
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "work_mem=512MB"
+    restart: unless-stopped
+    volumes:
+      - '/mnt/d/GitHub/spacex-api-analize/postgres/server_subscription:/docker-entrypoint-initdb.d/'
+    environment:
+      POSTGRES_USER: ${POSTGRES_SUBSCRIPTION_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_SUBSCRIPTION_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_SUBSCRIPTION_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_SUBSCRIPTION_USER} -d ${POSTGRES_SUBSCRIPTION_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      replication_network:
+        ipv4_address: 192.168.1.3
+      data_postgres:
+      click_net:
+        ipv4_address: 192.168.2.3
+    depends_on:
+      server_publicist:
+        condition: service_healthy
+
+# Создание сервера ClickHouse
+  server_clickhouse:
+    image: clickhouse/clickhouse-server
+    container_name: server_clickhouse
+    ports: 
+      - 8123:8123
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+      POSTGRES_SUBSCRIPTION_PASSWORD: ${POSTGRES_SUBSCRIPTION_PASSWORD}
+    volumes:
+      # - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/lib/clickhouse/'
+      # - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/log/clickhouse-server/'
+      - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_command:/docker-entrypoint-initdb.d/'
+    networks:
+      click_net:
+        ipv4_address: 192.168.2.2
+      metanet:
+        ipv4_address: 192.168.3.2
+    depends_on:
+      server_subscription:
+        condition: service_healthy
 
 #### Create PGAdmin ####
   pgadmin:
@@ -280,16 +342,81 @@ services:
           cpus: '0.5'
           memory: 1G
     networks:
-      - postgres
+      - data_postgres
+
+### Создание BI системы Metabase
+  metabase:
+    build: ./metabase/
+    container_name: metabase
+    hostname: metabase
+    ports:
+      - 3000:3000
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabaseappdb
+      MB_DB_PORT: 5432
+      MB_DB_USER: metabase
+      MB_DB_PASS: mysecretpassword
+      MB_DB_HOST: postgres
+    networks:
+      metanet:
+          ipv4_address: 192.168.3.4
+      metanet1:
+    volumes:
+      - metabasevol:/var/lib/docker/volumes/metabasevol/_data
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  postgres_metabase:
+    image: postgres:latest
+    container_name: postgres
+    hostname: postgres
+    environment:
+      POSTGRES_USER: metabase
+      POSTGRES_DB: metabaseappdb
+      POSTGRES_PASSWORD: mysecretpassword
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      metanet1:
+
+
 
 #####  Allocated disk space  #####
 volumes:
   postgres-db-volume:  # выделено по умолчанию для AirFlow
-  PGDATA:  # Выделен для postgres_data
   pgadmin-data:
-
+  pgdata:
+  metabasevol:
 
 #####  Settings Networks  #####
 networks:
-  postgres:
+  data_postgres:
+    driver: bridge
+    name: network_data_postgres
+  replication_network:
+    name: localnet
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.1.0/24
+  click_net:
+    name: clicknet
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.2.0/24
+  metanet:
+    name: metanet
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.3.0/24   
+  metanet1:
     driver: bridge
