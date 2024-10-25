@@ -1,9 +1,0 @@
-version: 2
-
-sources:
-  - name: my_database
-    tables:
-    - name: starlink_satellites
-    - name: launches
-    - name: rockets
-    - name: launchpads

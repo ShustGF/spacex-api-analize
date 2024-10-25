@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: db_spacex
+    tables:
+    - name: starlink_satellites
+    - name: launches
+    - name: rockets
+    - name: launchpads
+    - name: capsules
+    - name: cores
+    - name: ships
+    - name: payload
+    - name: landpads
+    - name: crew
