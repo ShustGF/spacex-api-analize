@@ -245,7 +245,7 @@ services:
       - "-c"
       - "work_mem=512MB"
     volumes:
-      - '/mnt/d/GitHub/spacex-api-analize/postgres/server_publicist:/docker-entrypoint-initdb.d/'
+      - './postgres/server_publicist:/docker-entrypoint-initdb.d/'
     environment:
       POSTGRES_USER: ${POSTGRES_PUBLICIST_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PUBLICIST_PASSWORD}
@@ -276,7 +276,7 @@ services:
       - "work_mem=512MB"
     restart: unless-stopped
     volumes:
-      - '/mnt/d/GitHub/spacex-api-analize/postgres/server_subscription:/docker-entrypoint-initdb.d/'
+      - './postgres/server_subscription:/docker-entrypoint-initdb.d/'
     environment:
       POSTGRES_USER: ${POSTGRES_SUBSCRIPTION_USER}
       POSTGRES_PASSWORD: ${POSTGRES_SUBSCRIPTION_PASSWORD}
@@ -311,9 +311,9 @@ services:
       CLICKHOUSE_DB: ${CLICKHOUSE_DB}
       POSTGRES_SUBSCRIPTION_PASSWORD: ${POSTGRES_SUBSCRIPTION_PASSWORD}
     volumes:
-      # - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/lib/clickhouse/'
-      # - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_data:/var/log/clickhouse-server/'
-      - '/mnt/d/GitHub/spacex-api-analize/clickhouse/ch_command:/docker-entrypoint-initdb.d/'
+      # - './clickhouse/ch_data:/var/lib/clickhouse/'
+      # - './clickhouse/ch_data:/var/log/clickhouse-server/'
+      - './clickhouse/ch_command:/docker-entrypoint-initdb.d/'
     networks:
       click_net:
         ipv4_address: 192.168.2.2
